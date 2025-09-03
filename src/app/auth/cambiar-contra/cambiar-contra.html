@@ -1,0 +1,35 @@
+<div class="container pt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card animate-fade-in">
+        <div class="card-header etiqueta">
+          <h4>Cambiar Contraseña</h4>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="contraseña_actual" class="form-label">Contraseña Actual</label>
+              <input type="password" id="contraseña_actual" formControlName="contraseña_actual" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="contraseña_nueva" class="form-label">Nueva Contraseña</label>
+              <input type="password" id="contraseña_nueva" formControlName="contraseña_nueva" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="confirmar_contraseña" class="form-label">Confirmar Nueva Contraseña</label>
+              <input type="password" id="confirmar_contraseña" formControlName="confirmar_contraseña" class="form-control">
+               <div *ngIf="changePasswordForm.errors?.['mismatch'] && changePasswordForm.get('confirmar_contraseña')?.touched" class="text-danger mt-1">
+                Las contraseñas no coinciden.
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!changePasswordForm.valid">Cambiar Contraseña</button>
+
+          </form>
+          <div *ngIf="mensaje" [ngClass]="{'alert-success': !esError, 'alert-danger': esError}" class="alert mt-3">
+            {{ mensaje }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

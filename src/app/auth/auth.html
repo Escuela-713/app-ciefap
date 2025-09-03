@@ -1,0 +1,46 @@
+<div class="auth-wrapper my-5">
+  <div class="auth-panel" [class.active]="showLogin">
+    <div class="info-section">
+      <h1>¡Hola otra vezzzz!</h1>
+      <p>¿No tienes una cuenta aún?</p>
+      <button (click)="goToRegister()">Crear Cuenta</button>
+    </div>
+    <div class="form-section">
+      <h2 class="login-registro">Iniciar Sesión</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin($event)">
+        <input formControlName="usuario" type="text" placeholder="Usuario" required required [class.is-valid]=" Username?.valid && Username?.touched" [class.is-invalid] ="Username?.invalid && Username?.touched"/>
+            @if (Username?.errors && Username?.touched) {
+             @if (Username?.hasError('required'))
+            {
+                <p class="text-danger">
+                    El usuario es requerido.
+                </p>
+            }
+        }
+        <input formControlName="contraseña" type="password" placeholder="Contraseña" required required [class.is-valid]=" Password?.valid && Password?.touched" [class.is-invalid] ="Password?.invalid && Password?.touched"/>
+         @if (Password?.errors && Password?.touched) {
+            @if (Password?.hasError('required'))
+            {
+                <p class="text-danger">
+                    La contraseña es obligatoria.
+                </p>
+            }
+        }
+           
+        <button type="submit" [formGroup]="loginForm" (ngSubmit)="onEnviar($event)">Entrar</button>
+      </form>
+
+       <button class="btn btn-outline-danger w-100 mb-2" (click)="loginCon('google')">
+          <i class="bi bi-google me-2"></i> Iniciar con Google
+        </button>
+
+        <button class="btn btn-outline-dark w-100 mb-2" (click)="loginCon('github')">
+          <i class="bi bi-github me-2"></i> Iniciar con GitHub
+        </button>
+
+        <button class="btn btn-outline-primary w-100 mb-2" (click)="loginCon('discord')">
+          <i class="bi bi-discord me-2"></i> Iniciar con Discord
+        </button>
+    </div>
+  </div>
+</div>
