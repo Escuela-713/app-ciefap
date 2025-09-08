@@ -1,0 +1,73 @@
+<section class="calculator">
+  <h2 class="title">Intensidades</h2>
+
+  <form [formGroup]="form" (ngSubmit)="calculate()" class="card">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="dap">DAP (cm)</label>
+        <input id="dap" type="number" formControlName="dap" placeholder="ej. 25" />
+        <span class="error-message" *ngIf="form.get('dap')?.invalid && form.get('dap')?.touched">
+          Este campo es obligatorio
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="height">Altura (m)</label>
+        <input id="height" type="number" step="0.1" formControlName="height" placeholder="ej. 12.5" />
+        <span class="error-message" *ngIf="form.get('height')?.invalid && form.get('height')?.touched">
+          Este campo es obligatorio
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="spacingRow">Espaciado en fila (m)</label>
+        <input id="spacingRow" type="number" step="0.1" formControlName="spacingRow" placeholder="ej. 2.5" />
+        <span class="error-message" *ngIf="form.get('spacingRow')?.invalid && form.get('spacingRow')?.touched">
+          Este campo es obligatorio
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="spacingBetweenRows">Espaciado entre filas (m)</label>
+        <input id="spacingBetweenRows" type="number" step="0.1" formControlName="spacingBetweenRows" placeholder="ej. 3" />
+        <span class="error-message" *ngIf="form.get('spacingBetweenRows')?.invalid && form.get('spacingBetweenRows')?.touched">
+          Este campo es obligatorio
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="age">Edad (años)</label>
+        <input id="age" type="number" formControlName="age" placeholder="ej. 8" />
+        <span class="error-message" *ngIf="form.get('age')?.invalid && form.get('age')?.touched">
+          Este campo es obligatorio
+        </span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn-primary">Calcular</button>
+    </div>
+
+    <div class="result-table" *ngIf="result as r">
+      <h3>Resultados de la parcela</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parámetro</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Árboles por hectárea</td>
+            <td>{{ r.treesPerHa | number }}</td>
+          </tr>
+          <tr>
+            <td>Área basal (m²/árbol)</td>
+            <td>{{ r.basalArea | number: '1.4-4' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </form>
+</section>

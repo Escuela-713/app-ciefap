@@ -1,0 +1,149 @@
+.calculator .title {
+  margin: 0 0 24px;
+  font-size: 24px;
+  text-align: center;
+  color: var(--text-900);
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ciefap-blue);
+}
+
+.calculator .card {
+  border: 2px solid var(--ciefap-blue);
+  max-width: 600px;
+  margin: 0 auto 30px;
+  padding: 30px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-700);
+  font-weight: 500;
+}
+
+input[type="number"] {
+  padding: 12px 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+input[type="number"]:focus {
+  border-color: var(--ciefap-blue);
+  box-shadow: 0 0 0 2px rgba(11, 74, 111, 0.2);
+}
+
+.calculator .btn-primary {
+  background: var(--ciefap-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  margin-top: 10px;
+  width: 100%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.calculator .btn-primary:hover {
+  background: var(--ciefap-blue-600);
+  transform: translateY(-2px);
+}
+
+.calculator .result {
+  margin-top: 24px;
+  padding: 20px;
+  background-color: var(--ciefap-gray-100);
+  border-radius: 8px;
+  border-left: 4px solid var(--ciefap-green);
+}
+
+.calculator .result h3 {
+  margin-top: 0;
+  color: var(--ciefap-blue);
+}
+
+@media (max-width: 600px) {
+  .form-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .calculator .card {
+    padding: 20px;
+  }
+}
+
+/* Añadir al final del archivo */
+
+.error-message {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #e53935;
+  background-color: rgba(229, 57, 53, 0.05);
+}
+
+.result-table {
+  margin-top: 24px;
+  padding: 20px;
+  background-color: var(--ciefap-gray-100);
+  border-radius: 8px;
+  border-left: 4px solid var(--ciefap-green);
+}
+
+.result-table h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--ciefap-blue);
+  font-size: 18px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--ciefap-gray-300);
+}
+
+table th {
+  font-weight: 600;
+  color: var(--text-900);
+  background-color: rgba(0,0,0,0.03);
+}
+
+table tr:last-child td {
+  border-bottom: none;
+}
+
+.dark-theme table th {
+  background-color: rgba(255,255,255,0.05);
+}
