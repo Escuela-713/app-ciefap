@@ -1,10 +1,9 @@
-@media (max-width: 768px) {
-  .auth-wrapper {
+@media (max-width: 768px){
+  .auth-wrapper{
     width: 90%;
     height: auto;
     flex-direction: column;
   }
-
   .auth-panel {
     flex-direction: column;
     position: static;
@@ -45,11 +44,11 @@
   border-color: #fff;
 }
 
+
 .auth-wrapper {
   position: relative;
   width: 800px;
-  height: auto;
-  min-height: 500px;
+  height: 500px;
   overflow: hidden;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -84,16 +83,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-bottom: none;
-}
-
-.info-section h2 {
-  font-weight: 700;
-  margin-bottom: 1rem;
 }
 
 .info-section button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   background: white;
   color: #2651D3;
   border: none;
@@ -101,7 +94,6 @@
   font-weight: bold;
   cursor: pointer;
 }
-
 
 .form-section {
   width: 50%;
@@ -121,50 +113,44 @@
 
 .form-section form input {
   width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
+  margin-bottom: 0.6rem;
+  padding: 0.7rem;
   border: 2px solid #ddd;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   box-sizing: border-box;
+
 }
 
-.form-section form input:focus {
-  outline: none;
-  border-color: #2651D3;
-  box-shadow: 0 0 0 3px rgba(38, 81, 211, 0.1);
-}
 
 .form-section form button {
   width: 100%;
-  padding: 1rem;
-  background: linear-gradient(135deg, #2651D3, #3d6ef2);
+  padding: 0.6rem;
+  background: #2651D3;
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px
 }
 
 .form-section form button:hover {
   background-color: #1e3ea5;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  
 }
 
-.is-valid {
-  border: 2px solid green !important;
-  box-shadow: 0 0 0 3px rgba(0, 128, 0, 0.1) !important;
+
+
+.is-valid{
+  border: 2px solid green!important;
 }
 
-.is-invalid {
+.is-invalid{
   border: 2px solid red !important;
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1) !important;
 }
 
-.carousel-img {
-  height: 200px;
-  object-fit: cover;
+.text-danger{
+  font-size: 0.7rem;
+  margin: 0 0 4px ;
 }
