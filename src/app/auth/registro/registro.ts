@@ -19,37 +19,44 @@ export class Registro {
   constructor(private router: Router, private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
       usuario: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+      contraseña: ['', [Validators.required, Validators.minLength(6)]],
+      confirmar_contraseña: ['', Validators.required]
     });
   }
 
+  // Getters para validaciones en el template
   get Nombre() { return this.registerForm.get('nombre'); }
-  get Apellido() { return this.registerForm.get('apellido'); }
   get Usuario() { return this.registerForm.get('usuario'); }
   get Email() { return this.registerForm.get('email'); }
-  get Contraseña() { return this.registerForm.get('password'); }
-  get ConfirmarContraseña() { return this.registerForm.get('confirmPassword'); }
+  get Password() { return this.registerForm.get('contraseña'); }
+  get ConfirmPassword() { return this.registerForm.get('confirmar_contraseña'); }
 
   onregister(event: Event) {
-    event.preventDefault(); // ⚠ importante
+    event.preventDefault();
 
-    const password = this.registerForm.get('password')?.value;
-    const confirmPassword = this.registerForm.get('confirmPassword')?.value;
+    const password = this.Password?.value;
+    const confirmPassword = this.ConfirmPassword?.value;
 
     if (this.registerForm.valid && password === confirmPassword) {
-      // Aquí normalmente enviarías datos al backend
-      // Por ahora solo mostramos el mensaje de éxito
+      if (this.registerForm.valid && password === confirmPassword) {
+        const registroData = {
+        nombre: this.registerForm.get('nombre')?.value,
+        apellido: this.registerForm.get('apellido')?.value,
+        email: this.registerForm.get('email')?.value,
+        usuario: this.registerForm.get('usuario')?.value,
+        contraseña: password 
+    };
+
+
       Swal.fire({
         icon: 'success',
         title: '¡Registro exitoso!',
         text: 'Tu cuenta ha sido creada correctamente.',
         confirmButtonText: 'Iniciar sesión'
       }).then(() => {
-        this.router.navigate(['/login']); // redirige al login
+        this.router.navigate(['/login']);
       });
     } else {
       Swal.fire({
@@ -61,7 +68,7 @@ export class Registro {
       this.registerForm.markAllAsTouched();
     }
   }
-
+  }
   backToLogin(): void {
     this.router.navigate(['/login']);
   }
