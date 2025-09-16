@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 export class Login {
     showLogin = true;
     loginForm: FormGroup;
+    private authService = inject(AuthService);
   
     constructor(private router: Router, private fb: FormBuilder){
     this.loginForm = this.fb.group({
@@ -44,15 +45,34 @@ export class Login {
      const usuario = this.Usuario?.value;
      const contraseña = this.Password?.value;
       
-     console.log(this.loginForm.valid)
-     if (this.loginForm.valid ){
-        const registroDate = {
-          usuario:  this.loginForm.get('usuario')?.value,
-          contraseña: this.loginForm.get('contraseña')?.value,
-        };
-        this.router.navigateByUrl("/home")
+     if (this.loginForm.valid) {
+        this.authService.login(usuario, contraseña).subscribe({
+          next: (response) => {
+            Swal.fire({
+              title: '¡Bienvenido!',
+              text: `Hola ${response.usuario}`,
+              icon: 'success',
+              confirmButtonText: 'Continuar'
+            }).then(() => {
+              this.router.navigate(['/dashboard']);
+            });
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error de autenticación',
+              text: 'Usuario o contraseña incorrectos',
+              icon: 'error',
+              confirmButtonText: 'Intentar de nuevo'
+            });
+          }
+        });
       } else {
-        alert('no entraste')
+        Swal.fire({
+          title: 'Formulario incompleto',
+          text: 'Por favor complete todos los campos',
+          icon: 'warning',
+          confirmButtonText: 'OK'
+        });
       }
      }
 

@@ -1,0 +1,404 @@
+<section class="forest-data">
+  <h2 class="title">Gestión de Datos Forestales</h2>
+  
+  <!-- Estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{ statistics.speciesCount }}</div>
+      <div class="stat-label">Especies Registradas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ statistics.treeDataCount }}</div>
+      <div class="stat-label">Registros de Árboles</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ statistics.uniqueSpeciesInData }}</div>
+      <div class="stat-label">Especies con Datos</div>
+    </div>
+  </div>
+
+  <!-- Navegación por pestañas -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-button" 
+      [class.active]="selectedTab === 'upload'"
+      (click)="selectedTab = 'upload'">
+      📁 Cargar Datos
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="selectedTab === 'add-tree'"
+      (click)="selectedTab = 'add-tree'">
+      ➕ Agregar Árbol
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="selectedTab === 'species'"
+      (click)="selectedTab = 'species'">
+      🌲 Especies ({{ species.length }})
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="selectedTab === 'data'"
+      (click)="selectedTab = 'data'">
+      📊 Datos de Árboles ({{ treeData.length }})
+    </button>
+  </div>
+
+  <!-- Contenido de pestañas -->
+  <div class="tab-content">
+    
+    <!-- Pestaña de carga -->
+    <div *ngIf="selectedTab === 'upload'" class="upload-section">
+      <div class="upload-card">
+        <h3>Cargar Archivo Excel</h3>
+        <p class="upload-description">
+          Sube un archivo Excel con datos de especies forestales y mediciones de árboles.
+          El archivo puede contener dos hojas: "Especies" y "Datos".
+        </p>
+        
+        <div class="upload-area">
+          <input 
+            type="file" 
+            id="fileInput" 
+            accept=".xlsx,.xls" 
+            (change)="onFileSelected($event)"
+            class="file-input">
+          <label for="fileInput" class="file-label">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">
+              <strong>Haz clic para seleccionar archivo</strong>
+              <br>o arrastra y suelta aquí
+            </div>
+            <div class="upload-hint">Archivos Excel (.xlsx, .xls)</div>
+          </label>
+        </div>
+        
+        <!-- Indicador de carga -->
+        <div *ngIf="isLoading" class="loading-indicator">
+          <div class="spinner"></div>
+          <span>Procesando archivo...</span>
+        </div>
+        
+        <!-- Mensajes -->
+        <div *ngIf="uploadMessage" class="message success">
+          ✅ {{ uploadMessage }}
+        </div>
+        <div *ngIf="uploadError" class="message error">
+          ❌ {{ uploadError }}
+        </div>
+        
+        <!-- Acciones -->
+        <div class="upload-actions">
+          <button class="btn btn-secondary" (click)="downloadTemplate()">
+            📥 Descargar Plantilla
+          </button>
+          <button class="btn btn-primary" (click)="exportData()" [disabled]="species.length === 0">
+            📤 Exportar Datos
+          </button>
+          <button class="btn btn-danger" (click)="clearAllData()">
+            🗑️ Limpiar Todo
+          </button>
+        </div>
+      </div>
+      
+      <!-- Instrucciones -->
+      <div class="instructions-card">
+        <h4>Formato del Archivo Excel</h4>
+        <div class="format-info">
+          <div class="sheet-info">
+            <h5>Hoja "Especies":</h5>
+            <ul>
+              <li><strong>nombre:</strong> Nombre común de la especie</li>
+              <li><strong>Nombre Científico:</strong> Nombre científico</li>
+              <li><strong>Densidad Madera:</strong> kg/m³</li>
+              <li><strong>Factor Forma:</strong> Factor de forma (0.3-0.6)</li>
+              <li><strong>Factor Biomasa:</strong> Factor de conversión biomasa</li>
+              <li><strong>Altura Máxima:</strong> Altura máxima en metros</li>
+              <li><strong>DAP Máximo:</strong> DAP máximo en cm</li>
+            </ul>
+          </div>
+          <div class="sheet-info">
+            <h5>Hoja "Datos":</h5>
+            <ul>
+              <li><strong>especie:</strong> Nombre de la especie</li>
+              <li><strong>DAP:</strong> Diámetro a la altura del pecho (cm)</li>
+              <li><strong>altura:</strong> Altura del árbol (m)</li>
+              <li><strong>edad:</strong> Edad del árbol (años) - opcional</li>
+              <li><strong>sitio:</strong> Clase de sitio - opcional</li>
+              <li><strong>ubicacion:</strong> Ubicación - opcional</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pestaña para agregar árbol -->
+    <div *ngIf="selectedTab === 'add-tree'" class="add-tree-section">
+      <div class="section-header">
+        <h3>Agregar Nuevo Árbol</h3>
+      </div>
+      
+      <form class="tree-form" (ngSubmit)="addTreeData()" #treeForm="ngForm">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="treeSpecies">Especie *</label>
+            <select 
+              id="treeSpecies" 
+              name="treeSpecies" 
+              [(ngModel)]="newTreeData.especie" 
+              (change)="onSpeciesChange($event)"
+              required 
+              class="form-control">
+              <option value="">Seleccione una especie</option>
+              <option *ngFor="let species of species" [value]="species.nombre">
+                {{ species.nombre }} ({{ species.nombreCientifico }})
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-field">
+            <label for="treeDap">DAP (cm) *</label>
+            <input 
+               id="treeDap" 
+               name="treeDap" 
+               type="number" 
+               step="0.1" 
+               [(ngModel)]="newTreeData.dap" 
+               (ngModelChange)="generateMissingDataPrompts()"
+               required 
+               min="0.1" 
+               placeholder="ej. 29.87"
+               class="form-control">
+          </div>
+          
+          <div class="form-field">
+            <label for="treeHeight">Altura (m) *</label>
+            <input 
+               id="treeHeight" 
+               name="treeHeight" 
+               type="number" 
+               step="0.1" 
+               [(ngModel)]="newTreeData.altura" 
+               (ngModelChange)="generateMissingDataPrompts()"
+               required 
+               min="0.1" 
+               placeholder="ej. 30.64"
+               class="form-control">
+          </div>
+          
+          <div class="form-field">
+            <label for="treeAge">Edad (años)</label>
+            <input 
+              id="treeAge" 
+              name="treeAge" 
+              type="number" 
+              [(ngModel)]="newTreeData.edad" 
+              min="1" 
+              placeholder="ej. 15"
+              class="form-control">
+          </div>
+          
+          <div class="form-field">
+            <label for="treeSite">Clase de Sitio</label>
+            <select 
+              id="treeSite" 
+              name="treeSite" 
+              [(ngModel)]="newTreeData.sitio" 
+              class="form-control">
+              <option value="">Seleccione clase de sitio</option>
+              <option value="Clase I">I (Mejor calidad)</option>
+              <option value="Clase II">II (Calidad media)</option>
+              <option value="Clase III">III (Menor calidad)</option>
+            </select>
+          </div>
+          
+          <div class="form-field">
+            <label for="treeLocation">Ubicación</label>
+            <input 
+              id="treeLocation" 
+              name="treeLocation" 
+              type="text" 
+              [(ngModel)]="newTreeData.ubicacion" 
+              placeholder="ej. Parcela 1, Sector A"
+              class="form-control">
+          </div>
+          
+          <div class="form-field">
+            <label for="treeDate">Fecha de Medición</label>
+            <input 
+              id="treeDate" 
+              name="treeDate" 
+              type="date" 
+              [(ngModel)]="newTreeData.fecha" 
+              class="form-control">
+          </div>
+          
+          <div class="form-field full-width">
+            <label for="treeObservations">Observaciones</label>
+            <textarea 
+              id="treeObservations" 
+              name="treeObservations" 
+              [(ngModel)]="newTreeData.observaciones" 
+              rows="3" 
+              placeholder="Observaciones adicionales..."
+              class="form-control"></textarea>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Limpiar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!treeForm.valid">Agregar Árbol</button>
+        </div>
+        
+        <div *ngIf="selectedSpeciesInfo" class="species-info-card">
+          <h4>Información de la Especie Seleccionada</h4>
+          <div class="species-params">
+            <div class="param">
+              <span class="label">Densidad de Madera:</span>
+              <span class="value">{{ selectedSpeciesInfo.densidadMadera }} kg/m³</span>
+            </div>
+            <div class="param">
+              <span class="label">Factor de Forma:</span>
+              <span class="value">{{ selectedSpeciesInfo.factorForma }}</span>
+            </div>
+            <div class="param">
+              <span class="label">Factor de Biomasa:</span>
+              <span class="value">{{ selectedSpeciesInfo.factorBiomasa }}</span>
+            </div>
+            <div class="param">
+              <span class="label">Altura Máxima:</span>
+              <span class="value">{{ selectedSpeciesInfo.alturaMaxima }} m</span>
+            </div>
+            <div class="param">
+              <span class="label">DAP Máximo:</span>
+              <span class="value">{{ selectedSpeciesInfo.dapMaximo }} cm</span>
+            </div>
+          </div>
+          
+          <div *ngIf="missingDataPrompts.length > 0" class="missing-data-prompts">
+            <h5>⚠️ Datos Sugeridos para Completar:</h5>
+            <ul>
+              <li *ngFor="let prompt of missingDataPrompts">{{ prompt }}</li>
+            </ul>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Pestaña de especies -->
+    <div *ngIf="selectedTab === 'species'" class="species-section">
+      <div class="section-header">
+        <h3>Base de Datos de Especies</h3>
+        <div class="search-box">
+          <input 
+            type="text" 
+            placeholder="Buscar especies..." 
+            [(ngModel)]="speciesFilter"
+            class="search-input">
+        </div>
+      </div>
+      
+      <div class="species-grid">
+        <div *ngFor="let species of filteredSpecies" class="species-card">
+          <div class="species-header">
+            <h4>{{ species.nombre }}</h4>
+            <button class="delete-btn" (click)="deleteSpecies(species.id)" title="Eliminar especie">
+              🗑️
+            </button>
+          </div>
+          <p class="scientific-name">{{ species.nombreCientifico }}</p>
+          <div class="species-details">
+            <div class="detail-row">
+              <span class="label">Densidad:</span>
+              <span class="value">{{ species.densidadMadera }} kg/m³</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Factor Forma:</span>
+              <span class="value">{{ species.factorForma }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Factor Biomasa:</span>
+              <span class="value">{{ species.factorBiomasa }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Altura Máx:</span>
+              <span class="value">{{ species.alturaMaxima }} m</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">DAP Máx:</span>
+              <span class="value">{{ species.dapMaximo }} cm</span>
+            </div>
+          </div>
+          <p *ngIf="species.descripcion" class="species-description">
+            {{ species.descripcion }}
+          </p>
+        </div>
+      </div>
+      
+      <div *ngIf="filteredSpecies.length === 0" class="empty-state">
+        <div class="empty-icon">🌲</div>
+        <h4>No se encontraron especies</h4>
+        <p>{{ speciesFilter ? 'Intenta con otros términos de búsqueda' : 'Carga un archivo Excel para agregar especies' }}</p>
+      </div>
+    </div>
+
+    <!-- Pestaña de datos de árboles -->
+    <div *ngIf="selectedTab === 'data'" class="tree-data-section">
+      <div class="section-header">
+        <h3>Registros de Árboles</h3>
+        <div class="header-actions">
+          <div class="search-box">
+            <input 
+              type="text" 
+              placeholder="Buscar por especie, ubicación..." 
+              [(ngModel)]="dataFilter"
+              class="search-input">
+          </div>
+          <button 
+            class="btn btn-danger" 
+            (click)="clearAllTreeData()"
+            [disabled]="treeData.length === 0"
+            title="Borrar todos los datos de árboles">
+            🗑️ Borrar Todos
+          </button>
+        </div>
+      </div>
+      
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Especie</th>
+              <th>DAP (cm)</th>
+              <th>Altura (m)</th>
+              <th>Edad</th>
+              <th>Sitio</th>
+              <th>Ubicación</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of filteredTreeData; let i = index">
+              <td class="species-cell">{{ data.especie }}</td>
+              <td class="number-cell">{{ data.dap | number:'1.1-1' }}</td>
+              <td class="number-cell">{{ data.altura | number:'1.1-1' }}</td>
+              <td class="number-cell">{{ data.edad || '-' }}</td>
+              <td>{{ data.sitio || '-' }}</td>
+              <td>{{ data.ubicacion || '-' }}</td>
+              <td>{{ data.fecha || '-' }}</td>
+              <td class="notes-cell">{{ data.observaciones || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div *ngIf="filteredTreeData.length === 0" class="empty-state">
+        <div class="empty-icon">📊</div>
+        <h4>No hay datos de árboles</h4>
+        <p>{{ dataFilter ? 'No se encontraron registros con esos criterios' : 'Carga un archivo Excel para agregar datos de árboles' }}</p>
+      </div>
+    </div>
+  </div>
+</section>

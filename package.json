@@ -32,12 +32,14 @@
     "@ng-bootstrap/ng-bootstrap": "^19.0.0-rc.0",
     "@popperjs/core": "^2.11.8",
     "@sweetalert2/ngx-sweetalert2": "^14.0.0",
+    "@types/xlsx": "^0.0.35",
     "bootstrap": "^5.3.8",
     "jquery": "^3.7.1",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.22.5",
     "swiper": "^10.0.4",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
