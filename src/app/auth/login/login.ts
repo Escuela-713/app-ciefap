@@ -19,8 +19,8 @@ export class Login {
   
     constructor(private router: Router, private fb: FormBuilder){
     this.loginForm = this.fb.group({
-      usuario: ['', Validators.required],
-      contraseña: ['', Validators.required]
+      usuario: ['', [Validators.required]],
+      contraseña: ['', [Validators.required]]
     });
   }
 // aca estoy declarando los gets 
@@ -28,22 +28,34 @@ export class Login {
     return this.loginForm.get('usuario');
   }
 
-  get Contraseña() {
+  get Password() {
     return this.loginForm.get('contraseña');
   }
 
   //este es para el boton que esta en el html
-  goLogin(): void {
+  goRegister(): void {
     this.router.navigate(['/registro']);
   }
 
   // este es para el metodo del boton en el form 
   onEnviar(event: Event) {
-    if (this.loginForm.valid) {
-      alert('bien pudiste entrar ')
-    }else {
-      alert('mal no entraste')
-    }
+     event.preventDefault();
+
+     const usuario = this.Usuario?.value;
+     const contraseña = this.Password?.value;
+      
+     console.log(this.loginForm.valid)
+     if (this.loginForm.valid ){
+        const registroDate = {
+          usuario:  this.loginForm.get('usuario')?.value,
+          contraseña: this.loginForm.get('contraseña')?.value,
+        };
+        this.router.navigateByUrl("/home")
+      } else {
+        alert('no entraste')
+      }
+     }
+
+
   }
-}
 
