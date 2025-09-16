@@ -1,11 +1,4 @@
-<header class="app-header">
-  <div class="container header-container">
-    <button *ngIf="showBackButton" class="btn-back" (click)="goBack()">
-      <i class="bi bi-arrow-left"></i>
-    </button>
-    <h1 class="brand">CIEFAP</h1>
-  </div>
-</header>
+<app-header></app-header>
 
 <button class="btn-darkmode-flotante" (click)="toggleDarkMode()">
   <i [class]="isDarkMode ? 'bi bi-sun' : 'bi bi-moon'"></i>

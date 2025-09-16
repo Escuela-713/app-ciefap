@@ -1,0 +1,23 @@
+<div class="auth-wrapper my-5">
+  <div class="auth-panel active">
+    <div class="info-section">
+      <h1>¡Hola otra vez!</h1>
+      <p>¿No tienes una cuenta aún?</p>
+      <button (click)="goRegister()">Crear Cuenta</button>
+    </div>
+
+    <div class="form-section">
+      <h2 class="login-registro">Iniciar Sesión</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onEnviar($event)">
+        <input type="text" placeholder="Usuario" formControlName="usuario" required [class.is-valid]=" Usuario?.valid && Usuario?.touched" [class.is-invalid] = "Usuario?.invalid && Usuario?.touched" />
+          @if (Usuario?.invalid && Usuario?.touched){
+            @if (Usuario?.hasError('required')){
+              <p class="text-danger"> El usuario es requerido</p>
+            }
+          }
+        <input type="password" placeholder="Contraseña" formControlName="contraseña" required [class.is-valid]=" Password?.valid && Password?.touched" [class.is-invalid] = "Password?.invalid && Password?.touched" />
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,12 @@
 import { Routes } from '@angular/router';
+import { Home } from './pages/home/home';
+import { Login} from './auth/login/login';
+import { Registro } from './auth/registro/registro';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: 'home', component: Home },
+  { path: 'login', component: Login}, 
+  { path: 'registro', component: Registro},
   {
     path: 'dashboard',
     loadComponent: () =>
@@ -12,5 +17,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/calculator/calculator.component').then(m => m.CalculatorComponent),
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'home' }
 ];

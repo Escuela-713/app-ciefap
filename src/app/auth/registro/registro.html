@@ -1,0 +1,60 @@
+<div class="auth-wrapper my-5">
+  <div class="auth-panel active">
+    
+    <!-- Informacion de inicio -->
+    <div class="info-section">
+      <h1>¡Bienvenido!</h1>
+      <p>¿Ya tienes una cuenta?</p>
+      <button (click)="backToLogin()">Iniciar Sesión</button>
+    </div>
+
+    <!--seccion del formulario -->
+    <div class="form-section">
+      <h2 class="login-registro">Crear Cuenta</h2>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onregister($event)">
+        <input formControlName="nombre" type="text" placeholder="Nombre Completo"  required [class.is-valid]=" Nombre?.valid && Nombre?.touched" [class.is-invalid] = "Nombre?.invalid && Nombre?.touched" />
+          @if (Nombre?.invalid && Nombre?.touched){
+            @if (Nombre?.hasError('required')){
+              <p class="text-danger"> El nombre es requerido</p>
+            }
+          }
+        <input formControlName="usuario" type="text" placeholder="Usuario"   required [class.is-valid]=" Usuario?.valid && Usuario?.touched" [class.is-invalid] = "Usuario?.invalid && Usuario?.touched" />
+          @if (Usuario?.invalid && Usuario?.touched){
+            @if (Usuario?.hasError('required')){
+              <p class="text-danger"> El usuario es requerido</p>
+            }
+          }
+        <input formControlName="email" type="email" placeholder="Correo Electrónico"  required [class.is-valid]=" Email?.valid && Email?.touched" [class.is-invalid] = "Email?.invalid && Email?.touched"/>
+          @if (Email?.invalid && Email?.touched){
+            @if (Email?.hasError('required')){
+              <p class="text-danger"> El email es requerido</p>
+            }
+            @if (Email?.hasError('email')){
+              <p class="text-danger"> El formato del email es incorrecto</p>
+            }
+          }
+        <input formControlName="contraseña" type="password" placeholder="Contraseña" required [class.is-valid]=" Password?.valid && Password?.touched" [class.is-invalid] ="Password?.invalid && Password?.touched" />
+           @if (Password?.errors && Password?.touched) {
+             @if (Password?.hasError('required'))
+            {
+                <p class="text-danger">
+                    La contraseña es requerida.
+                </p>
+            }
+          }
+        <input formControlName="confirmar_contraseña" type="password" placeholder="Confirmar contraseña" required [class.is-valid]=" ConfirmPassword?.valid && ConfirmPassword?.touched" [class.is-invalid] ="ConfirmPassword?.invalid && ConfirmPassword?.touched" />
+          @if (registerForm.errors?.['contraseña'] && registerForm.touched) {
+            <p class="text-danger">Las contraseñas no coinciden.</p>
+          }
+          @if (
+            registerForm.get('contraseña')?.value !== registerForm.get('confirmar_contraseña')?.value &&
+            registerForm.get('confirmar_contraseña')?.touched
+            ) {
+                <p class="text-danger">Las contraseñas no coinciden.</p>
+              }
+        <button type="submit">Registrar</button>
+      </form>
+    </div>
+  </div>
+</div>
