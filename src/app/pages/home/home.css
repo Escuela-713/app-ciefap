@@ -1,13 +1,12 @@
 /* Carrusel fullscreen */
 .carousel-item {
-  height: 100vh;
+  height: 100%;
 }
 
 .carousel-caption {
-  /* Quitamos el fondo oscuro */
-  background-color: transparent; /* antes era rgba(0,0,0,0.4) */
+  background-color: transparent;
   padding: 20px;
-  border-radius: 2000px; /* opcional, si no querés bordes redondeados */
+  border-radius: 2000px;
   color: white; /* asegura que el texto se vea sobre la imagen */
   text-shadow: 1px 1px 4px rgba(0,0,0,0.8); /* opcional, para que el texto resalte un poco */
 }
