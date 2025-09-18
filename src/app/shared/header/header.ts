@@ -11,41 +11,14 @@ import { filter } from 'rxjs/operators';
   templateUrl: './header.html',
   styleUrls: ['./header.css']
 })
-export class Header implements OnInit, OnDestroy {
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private routerSubscription?: Subscription;
+export class Header{
   
   isLoggedIn = false;
 
-  ngOnInit(): void {
-    this.updateAuthStatus();
-    
-    // Escuchar cambios de ruta para actualizar el estado de autenticación
-    this.routerSubscription = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateAuthStatus();
-      });
-  }
-
-  ngOnDestroy(): void {
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
-  }
-
-  private updateAuthStatus(): void {
-    this.isLoggedIn = this.authService.estaAutenticado();
-  }
-
+ 
   login() {
-    this.router.navigate(['/login']);
   }
 
   logout() {
-    this.authService.cerrarSesion();
-    this.isLoggedIn = false;
-    this.router.navigate(['/home']);
   }
 }
