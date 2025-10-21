@@ -1,22 +1,116 @@
 <div class="auth-wrapper my-5">
-  <div class="auth-panel active">
+  <div class="auth-panel active" [class.active]="!isRegisterActive">
+    <!-- LOGIN -->
     <div class="info-section">
       <h1>¡Hola otra vez!</h1>
       <p>¿No tienes una cuenta aún?</p>
-      <button (click)="goRegister()">Crear Cuenta</button>
+      <button (click)="toggleMode()">Crear Cuenta</button>
     </div>
 
     <div class="form-section">
       <h2 class="login-registro">Iniciar Sesión</h2>
       <form [formGroup]="loginForm" (ngSubmit)="onEnviar($event)">
-        <input type="text" placeholder="Usuario" formControlName="usuario" required [class.is-valid]=" Usuario?.valid && Usuario?.touched" [class.is-invalid] = "Usuario?.invalid && Usuario?.touched" />
-          @if (Usuario?.invalid && Usuario?.touched){
-            @if (Usuario?.hasError('required')){
-              <p class="text-danger"> El usuario es requerido</p>
-            }
-          }
-        <input type="password" placeholder="Contraseña" formControlName="contraseña" required [class.is-valid]=" Password?.valid && Password?.touched" [class.is-invalid] = "Password?.invalid && Password?.touched" />
+        <input
+          type="text"
+          placeholder="Usuario"
+          formControlName="usuario"
+          required
+          [class.is-valid]="Usuario?.valid && Usuario?.touched"
+          [class.is-invalid]="Usuario?.invalid && Usuario?.touched"
+        />
+        <p class="text-danger" *ngIf="Usuario?.invalid && Usuario?.touched">
+          El usuario es requerido
+        </p>
+
+        <input
+          type="password"
+          placeholder="Contraseña"
+          formControlName="contraseña"
+          required
+          [class.is-valid]="Password?.valid && Password?.touched"
+          [class.is-invalid]="Password?.invalid && Password?.touched"
+        />
+        <p class="text-danger" *ngIf="Password?.invalid && Password?.touched">
+          La contraseña es requerida
+        </p>
+
         <button type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="auth-panel" [class.active]="isRegisterActive">
+    <!-- REGISTRO -->
+    <div class="info-section">
+      <h1>¡Bienvenido!</h1>
+      <p>¿Ya tienes una cuenta?</p>
+      <button (click)="toggleMode()">Iniciar Sesión</button>
+    </div>
+
+    <div class="form-section">
+      <h2 class="login-registro">Crear Cuenta</h2>
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister($event)">
+        <input
+          formControlName="nombre"
+          type="text"
+          placeholder="Nombre Completo"
+          required
+          [class.is-valid]="Nombre?.valid && Nombre?.touched"
+          [class.is-invalid]="Nombre?.invalid && Nombre?.touched"
+        />
+        <p class="text-danger" *ngIf="Nombre?.invalid && Nombre?.touched">
+          El nombre es requerido
+        </p>
+
+        <input
+          formControlName="usuario"
+          type="text"
+          placeholder="Usuario"
+          required
+          [class.is-valid]="RegUsuario?.valid && RegUsuario?.touched"
+          [class.is-invalid]="RegUsuario?.invalid && RegUsuario?.touched"
+        />
+        <p class="text-danger" *ngIf="RegUsuario?.invalid && RegUsuario?.touched">
+          El usuario es requerido
+        </p>
+
+        <input
+          formControlName="email"
+          type="email"
+          placeholder="Correo Electrónico"
+          required
+          [class.is-valid]="Email?.valid && Email?.touched"
+          [class.is-invalid]="Email?.invalid && Email?.touched"
+        />
+        <p class="text-danger" *ngIf="Email?.invalid && Email?.touched">
+          {{ Email?.hasError('required') ? 'El email es requerido' : 'Formato de email incorrecto' }}
+        </p>
+
+        <input
+          formControlName="contraseña"
+          type="password"
+          placeholder="Contraseña"
+          required
+          [class.is-valid]="RegPassword?.valid && RegPassword?.touched"
+          [class.is-invalid]="RegPassword?.invalid && RegPassword?.touched"
+        />
+        <p class="text-danger" *ngIf="RegPassword?.invalid && RegPassword?.touched">
+          La contraseña es requerida
+        </p>
+
+        <input
+          formControlName="confirmar_contraseña"
+          type="password"
+          placeholder="Confirmar contraseña"
+          required
+          [class.is-valid]="ConfirmPassword?.valid && ConfirmPassword?.touched"
+          [class.is-invalid]="ConfirmPassword?.invalid && ConfirmPassword?.touched"
+        />
+        <p class="text-danger" *ngIf="registerForm.errors?.['contraseña'] || (registerForm.get('contraseña')?.value !== registerForm.get('confirmar_contraseña')?.value && registerForm.get('confirmar_contraseña')?.touched)">
+          Las contraseñas no coinciden.
+        </p>
+
+        <button type="submit">Registrar</button>
       </form>
     </div>
   </div>
