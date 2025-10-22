@@ -3,11 +3,13 @@ import { Home } from './pages/home/home';
 import { Login} from './auth/login/login';
 import { Registro } from './auth/registro/registro';
 import { authGuard } from './guards/auth.guard';
+import { Developers } from './pages/developers/developers';
 
 export const routes: Routes = [
   { path: 'home', component: Home },
   { path: 'login', component: Login}, 
   { path: 'registro', component: Registro},
+  { path: 'dev', component: Developers},
   {
     path: 'dashboard',
     loadComponent: () =>
