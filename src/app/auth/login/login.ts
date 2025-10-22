@@ -1,10 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../service/auth.service';
-import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,18 +13,18 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./login.css']
 })
 export class Login {
-    isRegisterActive = false;
+  isRegisterActive = false;
   loginForm: FormGroup;
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
-    // LOGIN FORM
+  constructor(private fb: FormBuilder, private router: Router, private auth : AuthService) {
+    // loginnn
     this.loginForm = this.fb.group({
       usuario: ['', [Validators.required]],
       contraseña: ['', [Validators.required]]
     });
 
-    // REGISTER FORM
+    // registroo
     this.registerForm = this.fb.group({
       nombre: ['', Validators.required],
       usuario: ['', Validators.required],
@@ -35,7 +34,7 @@ export class Login {
     });
   }
 
-  // ✅ Getters (para el template)
+  // Getters
   get Usuario() { return this.loginForm.get('usuario'); }
   get Password() { return this.loginForm.get('contraseña'); }
   get Nombre() { return this.registerForm.get('nombre'); }
@@ -44,19 +43,18 @@ export class Login {
   get RegPassword() { return this.registerForm.get('contraseña'); }
   get ConfirmPassword() { return this.registerForm.get('confirmar_contraseña'); }
 
-  // ✅ Cambiar entre login y registro
   toggleMode() {
     this.isRegisterActive = !this.isRegisterActive;
   }
 
-  // ✅ Enviar Login
   onEnviar(event: Event) {
     event.preventDefault();
 
+    
     if (this.loginForm.valid) {
       const { usuario, contraseña } = this.loginForm.value;
-      console.log('Login correcto:', { usuario, contraseña });
 
+      if (this.auth.login(usuario,contraseña)){
       Swal.fire({
         icon: 'success',
         title: 'Bienvenido',
@@ -74,9 +72,9 @@ export class Login {
       });
       this.loginForm.markAllAsTouched();
     }
+    }
   }
 
-  // ✅ Enviar Registro
   onRegister(event: Event) {
     event.preventDefault();
 

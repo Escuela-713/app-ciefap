@@ -1,151 +1,72 @@
-<section class="calculator mt-3">
-  <h2 class="title">Calculadora Forestal</h2>
+<div class="parcel-calculator">
+  <h2>Calculadora</h2>
 
-  <form [formGroup]="form" (ngSubmit)="calculate()" class="card">
-    <h3 style="color: var(--ciefap-blue); margin-bottom: 20px;">Datos del Árbol (Campos requeridos)</h3>
-    
-    <div class="form-grid">
-      <div class="form-field species-field">
-        <label for="speciesId" style="color: #2651D3; font-weight: bold;">Especie *</label>
-        <select id="speciesId" formControlName="speciesId" 
-                style="border: 2px solid #2651D3; background-color: rgba(38, 81, 211, 0.1); padding: 12px 14px; border-radius: 8px;">
-          <option value="">Seleccione una especie</option>
-          <option *ngFor="let species of species" [value]="species.id">
-            {{ species.nombre }} ({{ species.nombreCientifico }})
-          </option>
-        </select>
-        <span class="error-message" *ngIf="form.get('speciesId')?.invalid && form.get('speciesId')?.touched">
-          Seleccione una especie
-        </span>
-        <div *ngIf="selectedSpecies" class="species-info">
-          <small>
-            <strong>Parámetros:</strong> 
-            Densidad: {{ selectedSpecies.densidadMadera }} kg/m³ | 
-            Factor forma: {{ selectedSpecies.factorForma }} | 
-            Factor biomasa: {{ selectedSpecies.factorBiomasa }}
-          </small>
-        </div>
-      </div>
+  <!-- formulario de la parcela -->
+  <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()">
 
-      <div class="form-field">
-        <label for="dap" style="color: #2651D3; font-weight: bold;">DAP (cm) *</label>
-        <input id="dap" type="number" step="0.1" formControlName="dap" placeholder="ej. 29.87" 
-               style="border: 2px solid #2651D3; background-color: rgba(38, 81, 211, 0.1);" />
-        <span class="error-message" *ngIf="form.get('dap')?.invalid && form.get('dap')?.touched">
-          Ingrese un DAP válido (mayor a 0.1 cm)
-        </span>
-      </div>
+    <!-- especie del arbol (alamo por ahora) -->
+    <select formControlName="especie" [class.is-invalid]="especie?.invalid && especie?.touched">
+      <option value="">Seleccione especie</option>
+      <option value="alamo">Álamo</option>
+    </select>
 
-      <div class="form-field">
-        <label for="height" style="color: #2651D3; font-weight: bold;">Altura (m) *</label>
-        <input id="height" type="number" step="0.1" formControlName="height" placeholder="ej. 30.64" 
-               style="border: 2px solid #2651D3; background-color: rgba(38, 81, 211, 0.1);" />
-        <span class="error-message" *ngIf="form.get('height')?.invalid && form.get('height')?.touched">
-          Ingrese una altura válida (mayor a 0.1 m)
-        </span>
-      </div>
+    <!-- productores -->
+    <select formControlName="productor" [class.is-invalid]="productor?.invalid && productor?.touched">
+      <option value="">Seleccionar productor</option>
+      <option value="propietario">Propietario</option>
+      <option value="ingeniero">Ingeniero Forestal</option>
+    </select>
 
-      <div class="form-field">
-        <label for="siteClass" style="color: #2651D3; font-weight: bold;">Clase de Sitio *</label>
-        <select id="siteClass" formControlName="siteClass" 
-                style="border: 2px solid #2651D3; background-color: rgba(38, 81, 211, 0.1); padding: 12px 14px; border-radius: 8px;">
-          <option value="">Seleccione clase de sitio</option>
-          <option value="1">I (Mejor calidad)</option>
-          <option value="2">II (Calidad media)</option>
-          <option value="3">III (Menor calidad)</option>
-        </select>
-        <span class="error-message" *ngIf="form.get('siteClass')?.invalid && form.get('siteClass')?.touched">
-          Seleccione una clase de sitio
-        </span>
-      </div>
+    <!-- datos para los calculos -->
+    <input formControlName="distanciaFila" type="number" placeholder="Distancia de árboles en fila (m)" [class.is-invalid]="distanciaFila?.invalid && distanciaFila?.touched"/>
+    <input formControlName="distanciaEntreFilas" type="number" placeholder="Distancia entre filas (m)" [class.is-invalid]="distanciaEntreFilas?.invalid && distanciaEntreFilas?.touched"/>
+    <input formControlName="cantidadArboles" type="number" placeholder="Cantidad de árboles" [class.is-invalid]="cantidadArboles?.invalid && cantidadArboles?.touched"/>
+    <input formControlName="edad" type="number" placeholder="Edad (años)" [class.is-invalid]="edad?.invalid && edad?.touched"/>
 
-      <div class="form-field">
-        <label for="treeCount">Cantidad de Árboles</label>
-        <input id="treeCount" type="number" formControlName="treeCount" placeholder="ej. 100" />
-        <span class="error-message" *ngIf="form.get('treeCount')?.invalid && form.get('treeCount')?.touched">
-          Ingrese una cantidad válida (mínimo 1)
-        </span>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button type="submit" class="btn-primary">Calcular</button>
-    </div>
-
-    <div class="result-table" *ngIf="result as r">
-      <h3>Resultados Calculados</h3>
-      <div class="results-grid">
-        <div class="result-section">
-          <h4>Por Árbol Individual</h4>
-          <table>
-            <tbody>
-              <tr>
-                <td>Área basal (m²)</td>
-                <td>{{ r.basalAreaPerTree | number: '1.4-4' }}</td>
-              </tr>
-              <tr>
-                <td>Volumen (m³)</td>
-                <td>{{ r.volumePerTree | number: '1.3-3' }}</td>
-              </tr>
-              <tr>
-                <td>Biomasa (kg)</td>
-                <td>{{ r.biomassPerTree | number: '1.2-2' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="result-section">
-          <h4>Total ({{ form.get('treeCount')?.value }} árboles)</h4>
-          <table>
-            <tbody>
-              <tr>
-                <td>Área basal total (m²)</td>
-                <td>{{ r.totalBasalArea | number: '1.2-2' }}</td>
-              </tr>
-              <tr>
-                <td>Volumen total (m³)</td>
-                <td>{{ r.totalVolume | number: '1.2-2' }}</td>
-              </tr>
-              <tr>
-                <td>Biomasa total (kg)</td>
-                <td>{{ r.totalBiomass | number: '1.0-0' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Gráfico de crecimiento -->
-      <div class="chart-section" *ngIf="r.ageVolumeData">
-        <h4>Proyección de Crecimiento en Volumen</h4>
-        <div class="chart-container">
-          <svg width="400" height="250" viewBox="0 0 400 250">
-            <!-- Ejes -->
-            <line x1="50" y1="200" x2="350" y2="200" stroke="#333" stroke-width="2"/>
-            <line x1="50" y1="200" x2="50" y2="50" stroke="#333" stroke-width="2"/>
-            
-            <!-- Etiquetas de ejes -->
-            <text x="200" y="240" text-anchor="middle" font-size="12" fill="#666">Edad (años)</text>
-            <text x="25" y="125" text-anchor="middle" font-size="12" fill="#666" transform="rotate(-90 25 125)">Volumen (m³)</text>
-            
-            <!-- Línea de crecimiento -->
-            <polyline 
-              [attr.points]="getChartPoints(r.ageVolumeData)" 
-              fill="none" 
-              stroke="#ff6b35" 
-              stroke-width="3"/>
-            
-            <!-- Puntos de datos -->
-            <circle 
-              *ngFor="let point of r.ageVolumeData; let i = index" 
-              [attr.cx]="50 + (i * 15)" 
-              [attr.cy]="200 - (point.volume * 1000)" 
-              r="3" 
-              fill="#ff6b35"/>
-          </svg>
-        </div>
-      </div>
-    </div>
+    <button type="submit">Calcular Parcela</button>
   </form>
-</section>
+</div>
+
+
+
+  <div *ngIf="results" class="results-table">
+  <h3>Resultados de la parcela</h3>
+  <table>
+    <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
+    <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
+    <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
+    <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
+  </table>
+</div>
+
+
+  <!-- agregar arboles de forma unitaria  -->
+  <div *ngIf="showResults"  class="parcel-calculator">
+    <h3>Agregar arbol unitario</h3>
+    <form [formGroup]="treeForm" (ngSubmit)="addTree()">
+      <input formControlName="dap" type="number" placeholder="DAP (cm)" [class.is-invalid]="dap?.invalid && dap?.touched"/>
+      <input formControlName="altura" type="number" placeholder="Altura (m)" [class.is-invalid]="altura?.invalid && altura?.touched"/>
+      <button type="submit">Agregar arbol</button>
+    </form>
+  </div>
+
+  <!-- Tabla de los arboles  -->
+  <div class="parcel-calculator"  *ngIf="showTreeTable && treeList.length">
+    <h3>Tabla de arboles</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>DAP (cm)</th>
+          <th>Altura (m)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tree of treeList; index as i">
+          <td>{{ i + 1 }}</td>
+          <td>{{ tree.dap }}</td>
+          <td>{{ tree.altura }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

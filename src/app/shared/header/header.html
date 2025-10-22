@@ -1,47 +1,33 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-  <div class="container-fluid">
-    <!-- Título -->
-    <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <span class="fw-bold text-wrap" style="max-width: 300px;">
-        CIEFAP
-      </span>
+<nav class="modern-navbar">
+  <div class="container">
+    <a class="brand" routerLink="/">
+      <span>CIEFAP</span>
     </a>
 
-    <!-- Botón Hamburguesa -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <!-- menu hamburguesa para el celu-->
+    <button class="menu-toggle" (click)="toggleMenu()">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
     </button>
 
-    <!-- Menú -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        </li>
-        <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-        </li>
-        <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" routerLink="/calculator" routerLinkActive="active">Calculadora</a>
-        </li>
-        <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" routerLink="/forest-data" routerLinkActive="active">Datos Forestales</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#nosotros">Nosotros</a>
-        </li>
-      </ul>
-
-      <!-- Botón Acceder (redirige a /login si NO está logueado) -->
-      <div *ngIf="!isLoggedIn">
-        <a class="btn btn-primary" routerLink="/login">Acceder</a>
-      </div>
-
-      <!-- Botón Logout (solo si está logueado) -->
-      <div *ngIf="isLoggedIn">
-        <button class="btn btn-outline-danger" (click)="logout()">Salir</button>
-      </div>
-    </div>
+    <!-- menu principal -->
+    <ul [class.open]="menuOpen">
+      <li>
+        <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      </li>
+      <li *ngIf="isLoggedIn">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      </li>
+      <li>
+        <a href="#nosotros">Nosotros</a>
+      </li>
+      <li *ngIf="!isLoggedIn">
+        <a class="btn login-btn" routerLink="/login" (click)="login()">Acceder</a>
+      </li>
+      <li *ngIf="isLoggedIn">
+        <button class="btn logout-btn" (click)="logout()">Salir</button>
+      </li>
+    </ul>
   </div>
 </nav>
