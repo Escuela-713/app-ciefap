@@ -26,9 +26,16 @@ export class Developers {
       linkedin: 'https://www.linkedin.com/in/juan-ignacio-monta%C3%B1o-a53a9a367/'
     },
     {
-      nombre: 'Juan Montaño',
+      nombre: 'Vianel Almendra',
       rol: 'Frontend Developer',
-      foto: 'imagenes/bosques5.jpg',
+      foto: 'developers/Vianel.jpeg',
+      github: 'https://github.com',
+      linkedin: 'https://linkedin.com'
+    },
+    {
+      nombre: 'Noah Miura',
+      rol: 'Backend Developer',
+      foto: 'developers/noah.jpg',
       github: 'https://github.com',
       linkedin: 'https://linkedin.com'
     },
