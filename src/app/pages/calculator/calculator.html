@@ -1,72 +1,101 @@
 <div class="parcel-calculator">
   <h2>Calculadora</h2>
 
-  <!-- formulario de la parcela -->
-  <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()">
+  <!-- Pestañas -->
+  <div class="tabs">
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'parcela'"
+      (click)="activeTab = 'parcela'">
+      Datos de la parcela
+    </button>
 
-    <!-- especie del arbol (alamo por ahora) -->
-    <select formControlName="especie" [class.is-invalid]="especie?.invalid && especie?.touched">
-      <option value="">Seleccione especie</option>
-      <option value="alamo">Álamo</option>
-    </select>
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'arboles'"
+      (click)="activeTab = 'arboles'"
+      [disabled]="!results">
+      Árboles
+    </button>
 
-    <!-- productores -->
-    <select formControlName="productor" [class.is-invalid]="productor?.invalid && productor?.touched">
-      <option value="">Seleccionar productor</option>
-      <option value="propietario">Propietario</option>
-      <option value="ingeniero">Ingeniero Forestal</option>
-    </select>
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'resultados'"
+      (click)="activeTab = 'resultados'"
+      [disabled]="!results">
+      Resultados
+    </button>
+  </div>
 
-    <!-- datos para los calculos -->
-    <input formControlName="distanciaFila" type="number" placeholder="Distancia de árboles en fila (m)" [class.is-invalid]="distanciaFila?.invalid && distanciaFila?.touched"/>
-    <input formControlName="distanciaEntreFilas" type="number" placeholder="Distancia entre filas (m)" [class.is-invalid]="distanciaEntreFilas?.invalid && distanciaEntreFilas?.touched"/>
-    <input formControlName="cantidadArboles" type="number" placeholder="Cantidad de árboles" [class.is-invalid]="cantidadArboles?.invalid && cantidadArboles?.touched"/>
-    <input formControlName="edad" type="number" placeholder="Edad (años)" [class.is-invalid]="edad?.invalid && edad?.touched"/>
+  <!-- 🟢 TAB 1: Datos de la parcela -->
+  <div *ngIf="activeTab === 'parcela'">
+    <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()">
 
-    <button type="submit">Calcular Parcela</button>
-  </form>
-</div>
+      <!-- especie fija -->
+      <div class="readonly-field">
+        <label>Especie:</label>
+        <input type="text" value="Álamo" readonly />
+      </div>
 
+      <input formControlName="distanciaFila" type="number" placeholder="Distancia de árboles en fila (m)" />
+      <input formControlName="distanciaEntreFilas" type="number" placeholder="Distancia entre filas (m)" />
+      <input formControlName="cantidadArboles" type="number" placeholder="Cantidad de árboles" />
+      <input formControlName="edad" type="number" placeholder="Edad (años)" />
 
-
-  <div *ngIf="results" class="results-table">
-  <h3>Resultados de la parcela</h3>
-  <table>
-    <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
-    <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
-    <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
-    <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
-  </table>
-</div>
-
-
-  <!-- agregar arboles de forma unitaria  -->
-  <div *ngIf="showResults"  class="parcel-calculator">
-    <h3>Agregar arbol unitario</h3>
-    <form [formGroup]="treeForm" (ngSubmit)="addTree()">
-      <input formControlName="dap" type="number" placeholder="DAP (cm)" [class.is-invalid]="dap?.invalid && dap?.touched"/>
-      <input formControlName="altura" type="number" placeholder="Altura (m)" [class.is-invalid]="altura?.invalid && altura?.touched"/>
-      <button type="submit">Agregar arbol</button>
+      <button type="submit">Calcular Parcela</button>
     </form>
   </div>
 
-  <!-- Tabla de los arboles  -->
-  <div class="parcel-calculator"  *ngIf="showTreeTable && treeList.length">
-    <h3>Tabla de arboles</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>DAP (cm)</th>
-          <th>Altura (m)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let tree of treeList; index as i">
-          <td>{{ i + 1 }}</td>
-          <td>{{ tree.dap }}</td>
-          <td>{{ tree.altura }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- 🟢 TAB 2: Árboles -->
+  <div *ngIf="activeTab === 'arboles' && results">
+    <h3>Agregar árbol unitario</h3>
+    <form [formGroup]="treeForm" (ngSubmit)="addTree()">
+      <input formControlName="dap" type="number" placeholder="DAP (cm)" />
+      <input formControlName="altura" type="number" placeholder="Altura (m)" />
+      <button type="submit">Agregar árbol</button>
+    </form>
+
+    <div *ngIf="treeList.length" class="tree-table">
+      <h4>Árboles agregados</h4>
+      <table>
+        <thead>
+          <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tree of treeList; index as i">
+            <td>{{ i + 1 }}</td>
+            <td>{{ tree.dap }}</td>
+            <td>{{ tree.altura }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+
+  <!-- 🟢 TAB 3: Resultados -->
+  <div *ngIf="activeTab === 'resultados' && results">
+    <h3>Resultados de la parcela</h3>
+    <table>
+      <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
+      <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
+      <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
+      <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
+    </table>
+
+    <div *ngIf="treeList.length" class="tree-table">
+      <h4>Árboles individuales</h4>
+      <table>
+        <thead>
+          <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tree of treeList; index as i">
+            <td>{{ i + 1 }}</td>
+            <td>{{ tree.dap }}</td>
+            <td>{{ tree.altura }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
