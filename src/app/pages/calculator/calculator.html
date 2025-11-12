@@ -27,11 +27,10 @@
     </button>
   </div>
 
-  <!-- 🟢 TAB 1: Datos de la parcela -->
+  <!-- PARCELA -->
   <div *ngIf="activeTab === 'parcela'">
     <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()">
 
-      <!-- especie fija -->
       <div class="readonly-field">
         <label>Especie:</label>
         <input type="text" value="Álamo" readonly />
@@ -46,7 +45,7 @@
     </form>
   </div>
 
-  <!-- 🟢 TAB 2: Árboles -->
+  <!-- ARBOLES DATOS INDIVIDUALES -->
   <div *ngIf="activeTab === 'arboles' && results">
     <h3>Agregar árbol unitario</h3>
     <form [formGroup]="treeForm" (ngSubmit)="addTree()">
@@ -72,7 +71,7 @@
     </div>
   </div>
 
-  <!-- 🟢 TAB 3: Resultados -->
+  <!-- RESULTADOS-->
   <div *ngIf="activeTab === 'resultados' && results">
     <h3>Resultados de la parcela</h3>
     <table>
