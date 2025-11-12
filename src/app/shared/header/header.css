@@ -1,5 +1,5 @@
 .navbar {
-  background: linear-gradient(90deg, #1d3557, #457b9d);
+  background-color: #6c9207;
   color: #ffffff;
   padding: 0.8rem 1.5rem;
   position: sticky;
@@ -85,20 +85,20 @@
 
 /*botones*/
 nav .btn.login-btn {
-  background-color: #264653 !important;
+  background-color: #6c9207 !important;
   color: #f8f9fa !important; 
   padding: 0.55rem 1.2rem;
   border-radius: 6px;
   font-weight: 500;
-  border: 1px solid #264653;
+  border: 1px solid #4e670a;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 nav .btn.login-btn:hover {
-  background-color: #457b9d !important;
+  background-color: #6c9207 !important;
   color: #ffffff !important;
-  border-color: #457b9d;
+  border-color: #6c9207;
   transform: translateY(-1px);
 }
 
@@ -114,7 +114,7 @@ nav .btn.logout-btn {
 
 nav .btn.logout-btn:hover {
   background-color: #f1faee;
-  color: #1d3557 !important;
+  color: #ffffff !important;
 }
 
 
@@ -145,7 +145,7 @@ nav .btn.logout-btn:hover {
     right: 0;
     flex-direction: column;
     width: 250px;
-    background-color: #1d3557;
+    background-color: #6c9207;
     padding: 1rem;
     border-radius: 0 0 8px 8px;
     opacity: 0;

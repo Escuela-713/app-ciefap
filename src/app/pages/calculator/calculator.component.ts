@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIf, CommonModule } from '@angular/common';
 
-
 @Component({
   selector: 'app-calculator',
   standalone: true,
@@ -11,22 +10,17 @@ import { NgIf, CommonModule } from '@angular/common';
   styleUrl: './calculator.css'
 })
 export class CalculatorComponent {
-    parcelForm: FormGroup;
+  parcelForm: FormGroup;
   treeForm: FormGroup;
-
-  showResults = false;
-  showTreeTable = false;
-
-  // resultados de la parcela
   results: any = null;
-
-  // lista de árboles del usuario
   treeList: { dap: number; altura: number }[] = [];
+
+  // pestaña activa
+  activeTab: 'parcela' | 'arboles' | 'resultados' = 'parcela';
 
   constructor(private fb: FormBuilder) {
     this.parcelForm = this.fb.group({
-      especie: ['', Validators.required],
-      productor: ['', Validators.required],
+      especie: ['alamo'], // valor fijo
       distanciaFila: ['', Validators.required],
       distanciaEntreFilas: ['', Validators.required],
       cantidadArboles: ['', Validators.required],
@@ -39,8 +33,7 @@ export class CalculatorComponent {
     });
   }
 
-  get especie() { return this.parcelForm.get('especie'); }
-  get productor() { return this.parcelForm.get('productor'); }
+  // getters
   get distanciaFila() { return this.parcelForm.get('distanciaFila'); }
   get distanciaEntreFilas() { return this.parcelForm.get('distanciaEntreFilas'); }
   get cantidadArboles() { return this.parcelForm.get('cantidadArboles'); }
@@ -49,7 +42,6 @@ export class CalculatorComponent {
   get dap() { return this.treeForm.get('dap'); }
   get altura() { return this.treeForm.get('altura'); }
 
-  // calcular parcela de ejemplo. falta la API
   calculateParcel(): void {
     if (this.parcelForm.valid) {
       const { distanciaFila, distanciaEntreFilas, cantidadArboles, edad } = this.parcelForm.value;
@@ -66,23 +58,19 @@ export class CalculatorComponent {
         indiceSitio: indiceSitio.toFixed(2)
       };
 
-      this.showResults = true;
-      this.showTreeTable = false;
       this.treeList = [];
+      this.activeTab = 'arboles'; // pasa automáticamente a la siguiente pestaña
     } else {
       this.parcelForm.markAllAsTouched();
     }
   }
 
-  // agregamos arboles de forma individual
   addTree(): void {
     if (this.treeForm.valid) {
       this.treeList.push({ ...this.treeForm.value });
       this.treeForm.reset();
-      this.showTreeTable = true;
     } else {
       this.treeForm.markAllAsTouched();
     }
   }
-
 }

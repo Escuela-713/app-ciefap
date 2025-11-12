@@ -34,7 +34,7 @@
 
 .info-section {
   width: 50%;
-  background: linear-gradient(135deg, #2651D3, #3d6ef2);
+  background-color: #6c9207;/*linear-gradient(135deg, #2651D3, #3d6ef2);*/
   color: white;
   padding: 2rem;
   display: flex;
@@ -49,7 +49,7 @@
 .info-section button {
   padding: 0.8rem 1.5rem;
   background: white;
-  color: #2651D3;
+  color: #6c9207;
   border: none;
   border-radius: 8px;
   font-weight: bold;
@@ -59,7 +59,7 @@
 
 .info-section button:hover {
   background-color: #fff;
-  color: #1e3ea5;
+  color: #6c9207;
   transform: scale(1.05);
 }
 
@@ -92,14 +92,14 @@
 }
 
 .form-section form input:focus {
-  border-color: #2651D3;
+  border-color: #6c9207;
   box-shadow: 0 0 5px rgba(38, 81, 211, 0.3);
 }
 
 .form-section form button {
   width: 100%;
   padding: 0.6rem;
-  background: #2651D3;
+  background: #6c9207;
   color: white;
   border: none;
   border-radius: 8px;
@@ -110,7 +110,7 @@
 }
 
 .form-section form button:hover {
-  background-color: #1e3ea5;
+  background-color: #6c9207;
 }
 
 
