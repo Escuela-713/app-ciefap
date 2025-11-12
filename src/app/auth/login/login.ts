@@ -16,6 +16,11 @@ export class Login {
   isRegisterActive = false;
   loginForm: FormGroup;
   registerForm: FormGroup;
+  mostrarcontra = false;
+
+  toggleContra (){
+    this.mostrarcontra = !this.mostrarcontra;
+  }
 
   constructor(private fb: FormBuilder, private router: Router, private auth : AuthService) {
     // loginnn
@@ -46,6 +51,8 @@ export class Login {
   toggleMode() {
     this.isRegisterActive = !this.isRegisterActive;
   }
+
+
 
   onEnviar(event: Event) {
     event.preventDefault();
