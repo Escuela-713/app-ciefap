@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-historial',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './historial.html',
   styleUrl: './historial.css'
 })

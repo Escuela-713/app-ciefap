@@ -88,17 +88,17 @@ export class CalculatorComponent {
     arboles: this.treeList
   };
 
-  // Obtiene el historial actual del localStorage (si existe)
+  // aca obtiene el historial del localstorage
   const existing = localStorage.getItem('historial');
   const historial = existing ? JSON.parse(existing) : [];
 
-  // Agrega el nuevo registro
+  // agrega el nuevo registro
   historial.push(record);
 
   // Guarda nuevamente
   localStorage.setItem('historial', JSON.stringify(historial));
 
-  alert('Registro guardado en el historial ✅');
+  alert('Registro guardado en el historial');
 }
 
 }
