@@ -1,0 +1,61 @@
+<div class="historial-container">
+  <header class="historial-header">
+    <div class="header-title">
+      <h1>Historial de Parcelas</h1>
+      <p class="subtitle">Registros de cálculos y árboles individuales</p>
+    </div>
+    <div class="actions">
+      <button (click)="clearHistory()" class="btn clear-btn" [disabled]="!historial.length">
+        Limpiar historial
+      </button>
+      <button class="btn back-btn" routerLink="/calculator">
+  ← Volver a Calculadora
+</button>
+
+    </div>
+  </header>
+
+  <div *ngIf="!historial.length" class="empty-state">
+    <p><strong>No hay registros disponibles.</strong></p>
+    <p>Realice un nuevo cálculo en la sección "Calculadora" para generar resultados.</p>
+  </div>
+
+  <div *ngIf="historial.length" class="records-list">
+    <div *ngFor="let item of historial; index as i" class="record-card">
+      <div class="record-header">
+        <h2>Parcela #{{ i + 1 }}</h2>
+        <span class="fecha">{{ item.fecha }}</span>
+      </div>
+
+      <section class="parcel-section">
+        <h3>Datos de la Parcela</h3>
+        <table>
+          <tr><th>Tamaño</th><td>{{ item.parcela.tamano }} m²</td></tr>
+          <tr><th>Radio</th><td>{{ item.parcela.radio }} m</td></tr>
+          <tr><th>Altura dominante</th><td>{{ item.parcela.alturaDominante }} m</td></tr>
+          <tr><th>Índice de sitio</th><td>{{ item.parcela.indiceSitio }}</td></tr>
+        </table>
+      </section>
+
+      <section class="trees-section" *ngIf="item.arboles.length">
+        <h3>Árboles Registrados ({{ item.arboles.length }})</h3>
+        <table class="trees-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>DAP (cm)</th>
+              <th>Altura (m)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tree of item.arboles; index as j">
+              <td>{{ j + 1 }}</td>
+              <td>{{ tree.dap }}</td>
+              <td>{{ tree.altura }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</div>

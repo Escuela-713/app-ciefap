@@ -26,6 +26,9 @@
         <a class="btn login-btn" routerLink="/login" (click)="login()">Acceder</a>
       </li>
       <li *ngIf="isLoggedIn">
+        <a routerLink="/historial">Ver historial</a>
+      </li>
+      <li *ngIf="isLoggedIn">
         <button class="btn logout-btn" (click)="logout()">Salir</button>
       </li>
     </ul>

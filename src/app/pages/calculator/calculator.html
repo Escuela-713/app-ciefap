@@ -1,31 +1,31 @@
 <div class="parcel-calculator">
   <h2>Calculadora</h2>
 
-  <!-- Pestañas -->
-  <div class="tabs">
-    <button 
-      class="tab" 
-      [class.active]="activeTab === 'parcela'"
-      (click)="activeTab = 'parcela'">
-      Datos de la parcela
-    </button>
+<!-- Pestañas -->
+<div class="tabs">
+  <button 
+    class="tab" 
+    [class.active]="activeTab === 'parcela'"
+    (click)="activeTab = 'parcela'">
+    Datos de la parcela
+  </button>
 
-    <button 
-      class="tab" 
-      [class.active]="activeTab === 'arboles'"
-      (click)="activeTab = 'arboles'"
-      [disabled]="!results">
-      Árboles
-    </button>
+  <button 
+    class="tab" 
+    [class.active]="activeTab === 'arboles'"
+    (click)="activeTab = 'arboles'"
+    [disabled]="!results">
+    Árboles
+  </button>
 
-    <button 
-      class="tab" 
-      [class.active]="activeTab === 'resultados'"
-      (click)="activeTab = 'resultados'"
-      [disabled]="!results">
-      Resultados
-    </button>
-  </div>
+  <button 
+    class="tab" 
+    [class.active]="activeTab === 'resultados'"
+    (click)="activeTab = 'resultados'"
+    [disabled]="!treeList.length">
+    Resultados
+  </button>
+</div>
 
   <!-- PARCELA -->
   <div *ngIf="activeTab === 'parcela'">
@@ -71,30 +71,31 @@
     </div>
   </div>
 
-  <!-- RESULTADOS-->
-  <div *ngIf="activeTab === 'resultados' && results">
-    <h3>Resultados de la parcela</h3>
-    <table>
-      <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
-      <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
-      <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
-      <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
-    </table>
+<!-- RESULTADOS -->
+<div *ngIf="activeTab === 'resultados' && treeList.length">
+  <h3>Resultados de la parcela</h3>
+  <table>
+    <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
+    <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
+    <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
+    <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
+  </table>
 
-    <div *ngIf="treeList.length" class="tree-table">
-      <h4>Árboles individuales</h4>
-      <table>
-        <thead>
-          <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let tree of treeList; index as i">
-            <td>{{ i + 1 }}</td>
-            <td>{{ tree.dap }}</td>
-            <td>{{ tree.altura }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div *ngIf="treeList.length" class="tree-table">
+    <h4>Árboles individuales</h4>
+    <table>
+      <thead>
+        <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tree of treeList; index as i">
+          <td>{{ i + 1 }}</td>
+          <td>{{ tree.dap }}</td>
+          <td>{{ tree.altura }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+   <button (click)="saveToHistory()">Guardar en historial</button>
+
 </div>

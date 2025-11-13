@@ -73,4 +73,32 @@ export class CalculatorComponent {
       this.treeForm.markAllAsTouched();
     }
   }
+
+
+  saveToHistory(): void {
+  if (!this.results || !this.treeList.length) {
+    alert('No hay resultados o árboles cargados para guardar.');
+    return;
+  }
+
+  // Construye el objeto a guardar
+  const record = {
+    fecha: new Date().toLocaleString(),
+    parcela: this.results,
+    arboles: this.treeList
+  };
+
+  // Obtiene el historial actual del localStorage (si existe)
+  const existing = localStorage.getItem('historial');
+  const historial = existing ? JSON.parse(existing) : [];
+
+  // Agrega el nuevo registro
+  historial.push(record);
+
+  // Guarda nuevamente
+  localStorage.setItem('historial', JSON.stringify(historial));
+
+  alert('Registro guardado en el historial ✅');
+}
+
 }

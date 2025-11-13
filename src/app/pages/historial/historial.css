@@ -1,0 +1,149 @@
+/* ====== ESTRUCTURA GENERAL ====== */
+.historial-container {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 1.5rem 2rem;
+  font-family: "Roboto", "Segoe UI", sans-serif;
+  color: #1f2e1f;
+  background-color: #fafafa;
+}
+
+/* ====== HEADER ====== */
+.historial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 3px solid #4e6b3f;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2b3d2b;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #566356;
+  margin-top: 0.3rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+/* ====== BOTONES ====== */
+.btn {
+  border: 1px solid #4e6b3f;
+  background-color: #4e6b3f;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  text-decoration: none;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #3d5632;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  background-color: #cccccc;
+  border-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.clear-btn {
+  background-color: #a33a3a;
+  border-color: #8e2f2f;
+}
+
+.clear-btn:hover:not(:disabled) {
+  background-color: #8e2f2f;
+}
+
+/* ====== ESTADO VACÍO ====== */
+.empty-state {
+  background-color: #f3f3f3;
+  border: 1px solid #d6d6d6;
+  border-radius: 10px;
+  text-align: center;
+  padding: 3rem;
+  color: #555;
+  font-size: 1rem;
+}
+
+/* ====== REGISTROS ====== */
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.record-card {
+  background-color: #ffffff;
+  border: 1px solid #d8ded8;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(30, 50, 30, 0.08);
+  padding: 1.5rem;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.record-header h2 {
+  color: #304030;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.fecha {
+  font-size: 0.9rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* ====== TABLAS ====== */
+section {
+  margin-top: 1rem;
+}
+
+section h3 {
+  font-size: 1rem;
+  color: #3d5632;
+  margin-bottom: 0.4rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e4e4e4;
+}
+
+th {
+  background-color: #f5f5f5;
+  color: #2e402e;
+  font-weight: 600;
+}
+
+tr:nth-child(even) td {
+  background-color: #fafafa;
+}
