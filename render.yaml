@@ -2,7 +2,7 @@ services:
   - type: web
     name: ciefap-backend
     runtime: python
-    buildCommand: ./build.sh
+    buildCommand: pip install -r requirements.txt && python manage.py migrate
     startCommand: gunicorn server.wsgi:application
     envVars:
       - key: PYTHON_VERSION
@@ -11,6 +11,15 @@ services:
         generateValue: true
       - key: DEBUG
         value: False
-      - key: ALLOWED_HOSTS
-        sync: false
-
+      - key: MYSQL_ADDON_DB
+        value: biuimjrxprcf0jisnvlr
+      - key: MYSQL_ADDON_HOST
+        value: biuimjrxprcf0jisnvlr-mysql.services.clever-cloud.com
+      - key: MYSQL_ADDON_PASSWORD
+        value: 8PTCBV6WZO51PBAvus0U
+      - key: MYSQL_ADDON_PORT
+        value: 3306
+      - key: MYSQL_ADDON_USER
+        value: unuqwgt1egf71klo
+      - key: MYSQL_ADDON_URI
+        value: mysql://unuqwgt1egf71klo:8PTCBV6WZO51PBAvus0U@biuimjrxprcf0jisnvlr-mysql.services.clever-cloud.com:3306/biuimjrxprcf0jisnvlr
