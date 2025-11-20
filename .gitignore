@@ -1,0 +1,38 @@
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (Angular frontend)
+app-ciefap/node_modules/
+app-ciefap/dist/
+app-ciefap/.angular/
+
+# Environment variables
+.env
+.env.local
