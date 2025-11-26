@@ -15,7 +15,7 @@ export const routes: Routes = [
   { path: 'registro', component: Registro},
   { path: 'dev', component: Developers},
   { path: 'historial', component: Historial},
-  { path: 'dashboad', component: DashboardComponent}, 
+  { path: 'dashboard', component: DashboardComponent}, 
   { path: 'calculator', component: CalculatorComponent},
   { path: 'forest-data', component: ForestDataComponent},
   { path: '', redirectTo: 'home', pathMatch: 'full' },
