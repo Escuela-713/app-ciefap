@@ -1,0 +1,37 @@
+<nav class="navbar">
+  <div class="container">
+    <a class="brand" routerLink="/">
+      <img src="logo/logo-ciefap.png" alt="" style="width: 240px; height: 55px;">
+    </a>
+
+    <!-- menu hamburguesa para el celu-->
+    <button class="menu-toggle" (click)="toggleMenu()">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <!-- menu principal -->
+    <ul [class.open]="menuOpen">
+      <li>
+        <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      </li>
+      <li *ngIf="isLoggedIn">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      </li>
+      <li>
+        <a href="#nosotros">Nosotros</a>
+      </li>
+      <li *ngIf="!isLoggedIn">
+        <a class="btn login-btn" routerLink="/login" (click)="login()">Acceder</a>
+      </li>
+      <li *ngIf="isLoggedIn">
+        <a routerLink="/historial">Ver historial</a>
+      </li>
+      <li *ngIf="isLoggedIn">
+        <button class="btn logout-btn" (click)="logout()">Salir</button>
+      </li>
+    </ul>
+  </div>
+</nav>
+

@@ -1,0 +1,101 @@
+<div class="parcel-calculator">
+  <h2>Calculadora</h2>
+
+<!-- Pestañas -->
+<div class="tabs">
+  <button 
+    class="tab" 
+    [class.active]="activeTab === 'parcela'"
+    (click)="activeTab = 'parcela'">
+    Datos de la parcela
+  </button>
+
+  <button 
+    class="tab" 
+    [class.active]="activeTab === 'arboles'"
+    (click)="activeTab = 'arboles'"
+    [disabled]="!results">
+    Árboles
+  </button>
+
+  <button 
+    class="tab" 
+    [class.active]="activeTab === 'resultados'"
+    (click)="activeTab = 'resultados'"
+    [disabled]="!treeList.length">
+    Resultados
+  </button>
+</div>
+
+  <!-- PARCELA -->
+  <div *ngIf="activeTab === 'parcela'">
+    <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()">
+
+      <div class="readonly-field">
+        <label>Especie:</label>
+        <input type="text" value="Álamo" readonly />
+      </div>
+
+      <input formControlName="distanciaFila" type="number" placeholder="Distancia de árboles en fila (m)" />
+      <input formControlName="distanciaEntreFilas" type="number" placeholder="Distancia entre filas (m)" />
+      <input formControlName="cantidadArboles" type="number" placeholder="Cantidad de árboles" />
+      <input formControlName="edad" type="number" placeholder="Edad (años)" />
+
+      <button type="submit">Calcular Parcela</button>
+    </form>
+  </div>
+
+  <!-- ARBOLES DATOS INDIVIDUALES -->
+  <div *ngIf="activeTab === 'arboles' && results">
+    <h3>Agregar árbol unitario</h3>
+    <form [formGroup]="treeForm" (ngSubmit)="addTree()">
+      <input formControlName="dap" type="number" placeholder="DAP (cm)" />
+      <input formControlName="altura" type="number" placeholder="Altura (m)" />
+      <button type="submit">Agregar árbol</button>
+    </form>
+
+    <div *ngIf="treeList.length" class="tree-table">
+      <h4>Árboles agregados</h4>
+      <table>
+        <thead>
+          <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tree of treeList; index as i">
+            <td>{{ i + 1 }}</td>
+            <td>{{ tree.dap }}</td>
+            <td>{{ tree.altura }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<!-- RESULTADOS -->
+<div *ngIf="activeTab === 'resultados' && treeList.length">
+  <h3>Resultados de la parcela</h3>
+  <table>
+    <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
+    <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
+    <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
+    <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
+  </table>
+
+  <div *ngIf="treeList.length" class="tree-table">
+    <h4>Árboles individuales</h4>
+    <table>
+      <thead>
+        <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tree of treeList; index as i">
+          <td>{{ i + 1 }}</td>
+          <td>{{ tree.dap }}</td>
+          <td>{{ tree.altura }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+   <button (click)="saveToHistory()">Guardar en historial</button>
+
+</div>
