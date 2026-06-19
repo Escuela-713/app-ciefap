@@ -6,7 +6,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .navbar .container {
@@ -86,7 +86,7 @@
 /*botones*/
 nav .btn.login-btn {
   background-color: #6c9207 !important;
-  color: #f8f9fa !important; 
+  color: #f8f9fa !important;
   padding: 0.55rem 1.2rem;
   border-radius: 6px;
   font-weight: 500;
@@ -117,7 +117,6 @@ nav .btn.logout-btn:hover {
   color: #ffffff !important;
 }
 
-
 .menu-toggle {
   display: none;
   flex-direction: column;
@@ -133,10 +132,6 @@ nav .btn.logout-btn:hover {
   background-color: #f8f9fa;
   transition: all 0.3s ease;
 }
-
-
-
-
 
 @media (max-width: 992px) {
   .navbar ul {

@@ -1,7 +1,7 @@
 <nav class="navbar">
   <div class="container">
     <a class="brand" routerLink="/">
-      <img src="logo/logo-ciefap.png" alt="" style="width: 240px; height: 55px;">
+      <img src="logo/logo-ciefap.png" alt="" style="width: 240px; height: 55px" />
     </a>
 
     <!-- menu hamburguesa para el celu-->
@@ -14,13 +14,15 @@
     <!-- menu principal -->
     <ul [class.open]="menuOpen">
       <li>
-        <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
       </li>
       <li *ngIf="isLoggedIn">
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
       </li>
-      <li>
-        <a href="#nosotros">Nosotros</a>
+      <li *ngIf="!isLoggedIn">
+        <a routerLink="/about" routerLinkActive="active">Nosotros</a>
       </li>
       <li *ngIf="!isLoggedIn">
         <a class="btn login-btn" routerLink="/login" (click)="login()">Acceder</a>
@@ -34,4 +36,3 @@
     </ul>
   </div>
 </nav>
-

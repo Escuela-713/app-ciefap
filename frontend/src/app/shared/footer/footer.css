@@ -1,0 +1,57 @@
+.footer-slim {
+  background-color: #6c9207;
+  color: azure;
+  padding: 1.5rem 0;
+  font-family: 'Segoe UI', sans-serif;
+  border-top: 1px solid rgba(240, 255, 255, 0.1);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10%;
+}
+
+.copyright span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.contact-links a {
+  color: azure;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+p {
+  color: azure;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.contact-links a:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.separator {
+  margin: 0 10px;
+  opacity: 0.3;
+}
+
+@media (max-width: 480px) {
+  .container {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.contact-links span:not(.separator) {
+  color: azure;
+  font-size: 0.9rem;
+}
