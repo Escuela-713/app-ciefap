@@ -1,5 +1,4 @@
-<!-- Carrusel -->
-<div id="homeCarousel home" class="carousel slide" data-bs-ride="carousel">
+<div id="homeCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
       <img
@@ -12,7 +11,6 @@
         class="carousel-caption d-flex flex-column justify-content-center align-items-center h-100"
       >
         <h1 class="display-3 text-white fw-bold">Bienvenido a la pagina del Ciefap</h1>
-        <!-- <p class="lead text-white">aca se puede poner info o sacar </p> -->
       </div>
     </div>
     <div class="carousel-item">
@@ -35,24 +33,25 @@
       <img
         src="/imagenes/bosques5.jpg"
         class="d-block w-100"
-        alt="Slide 2"
+        alt="Slide 3"
         style="height: 100vh; object-fit: cover"
       />
       <div
         class="carousel-caption d-flex flex-column justify-content-center align-items-center h-100"
       >
-        <h1 class="display-3 text-white fw-bold"><!-- Aca se puede agregar mas informacion --></h1>
-        <p class="lead text-white"><!-- Aca se puede agregar mas informacion --></p>
+        <h1 class="display-3 text-white fw-bold">Más información</h1>
       </div>
     </div>
   </div>
+
   <button
     class="carousel-control-prev"
     type="button"
     data-bs-target="#homeCarousel"
     data-bs-slide="prev"
   >
-    <span class="carousel-control-prev-icon"></span>
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
   </button>
   <button
     class="carousel-control-next"
@@ -60,8 +59,7 @@
     data-bs-target="#homeCarousel"
     data-bs-slide="next"
   >
-    <span class="carousel-control-next-icon"></span>
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
   </button>
 </div>
-
-<!-- aca van las secciones -->
