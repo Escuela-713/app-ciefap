@@ -2,7 +2,7 @@
 :host {
   --ciefap-blue: #0b4a6f;
   --ciefap-blue-600: #0d5e89;
-  --ciefap-green: #4a8f29;  /* Color verde para el borde de las tarjetas */
+  --ciefap-green: #4a8f29; /* Color verde para el borde de las tarjetas */
   --ciefap-gray-100: #f6f7f9;
   --ciefap-gray-300: #e4e7eb;
   --text-900: #17212b;
@@ -16,8 +16,13 @@
   min-height: 100vh;
 }
 
-* { box-sizing: border-box; }
-body { margin: 0; font-family: Arial, sans-serif; }
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
 
 .container {
   width: 100%;
@@ -131,13 +136,13 @@ body { margin: 0; font-family: Arial, sans-serif; }
 }
 
 /* Mejoras para los inputs en modo oscuro */
-.dark-theme input[type="number"] {
+.dark-theme input[type='number'] {
   background-color: var(--input-bg);
   color: var(--input-text);
   border-color: var(--input-border);
 }
 
-.dark-theme input[type="number"]:focus {
+.dark-theme input[type='number']:focus {
   border-color: var(--ciefap-blue-600);
   box-shadow: 0 0 0 2px rgba(13, 94, 137, 0.3);
 }
@@ -170,10 +175,15 @@ body { margin: 0; font-family: Arial, sans-serif; }
   border: 1px solid var(--ciefap-gray-300);
   border-radius: 10px;
   padding: 18px;
-  transition: border-color .2s ease, box-shadow .2s ease, transform .08s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.08s ease;
 }
 
-.card.clickable { cursor: pointer; }
+.card.clickable {
+  cursor: pointer;
+}
 .card.clickable:hover {
   border-color: var(--ciefap-green);
   box-shadow: 0 6px 22px rgba(74, 143, 41, 0.14);
@@ -192,9 +202,13 @@ body { margin: 0; font-family: Arial, sans-serif; }
   flex-direction: column;
 }
 
-label { font-size: 13px; margin-bottom: 6px; color: var(--text-700); }
+label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text-700);
+}
 
-input[type="number"] {
+input[type='number'] {
   padding: 10px 12px;
   border: 1px solid var(--ciefap-gray-300);
   border-radius: 8px;
@@ -203,7 +217,7 @@ input[type="number"] {
   color: var(--text-color);
 }
 
-input[type="number"]:focus {
+input[type='number']:focus {
   border-color: var(--ciefap-blue);
   box-shadow: 0 0 0 3px rgba(11, 74, 111, 0.12);
 }
@@ -222,5 +236,23 @@ input[type="number"]:focus {
 }
 
 @media (max-width: 720px) {
-  .form-grid { grid-template-columns: 1fr; }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Esto asegura que la página ocupe el alto total de la ventana */
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Altura mínima: 100% de la pantalla */
+}
+
+.content {
+  flex: 1; /* Esto hace que el contenido se expanda y empuje al footer al fondo */
 }
