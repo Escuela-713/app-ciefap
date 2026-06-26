@@ -12,14 +12,14 @@
       <form [formGroup]="loginForm" (ngSubmit)="onEnviar($event)">
         <input
           type="text"
-          placeholder="Usuario"
-          formControlName="usuario"
+          placeholder="Email"
+          formControlName="email"
           required
-          [class.is-valid]="Usuario?.valid && Usuario?.touched"
-          [class.is-invalid]="Usuario?.invalid && Usuario?.touched"
+          [class.is-valid]="Email?.valid && Email?.touched"
+          [class.is-invalid]="Email?.invalid && Email?.touched"
         />
-        <p class="text-danger" *ngIf="Usuario?.invalid && Usuario?.touched">
-          El usuario es requerido
+        <p class="text-danger" *ngIf="Email?.invalid && Email?.touched">
+          El email es requerido
         </p>
 
         <input

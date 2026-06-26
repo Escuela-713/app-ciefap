@@ -28,14 +28,14 @@ export class Login {
   ) {
     // login
     this.loginForm = this.fb.group({
-      usuario: ['', [Validators.required]],
+      email: ['', [Validators.required]],
       contraseña: ['', [Validators.required]],
     });
   }
 
   // Getters
-  get Usuario() {
-    return this.loginForm.get('usuario');
+  get Email() {
+    return this.loginForm.get('email');
   }
   get Password() {
     return this.loginForm.get('contraseña');
@@ -49,13 +49,13 @@ export class Login {
     event.preventDefault();
 
     if (this.loginForm.valid) {
-      const { usuario, contraseña } = this.loginForm.value;
+      const { email, contraseña } = this.loginForm.value;
 
-      if (this.auth.login(usuario, contraseña)) {
+      if (this.auth.login(email, contraseña)) {
         Swal.fire({
           icon: 'success',
           title: 'Bienvenido',
-          text: `Hola ${usuario}!`,
+          text: `Hola ${email}!`,
           timer: 1500,
           showConfirmButton: false,
         }).then(() => {
