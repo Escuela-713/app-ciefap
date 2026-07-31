@@ -1,3 +1,10 @@
+---
+name: Tarea / Iteración
+about: Plantilla para registrar tareas y desarrollo iterativo
+title: "[TIPO][MÓDULO] "
+labels: ''
+assignees: ''
+---
 ### Descripción general
 <!-- Explicá brevemente qué se va a hacer o qué problema se encontró -->
 
