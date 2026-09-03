@@ -6,7 +6,6 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export interface LoginResponse {
   access_token: string;
   token_type: string;
-  usuario: string;
   rol: string;
   email: string;
   nombre: string;
@@ -26,8 +25,8 @@ export class AuthService {
 
   constructor (){}
 
-  login(usuario: string, contraseña: string): boolean {
-    const success = usuario === this.validUser && contraseña === this.validPassword;
+  login(email: string, contraseña: string): boolean {
+    const success = email === this.validUser && contraseña === this.validPassword;
     this.loggedIn.next(success);
     return success;
   }

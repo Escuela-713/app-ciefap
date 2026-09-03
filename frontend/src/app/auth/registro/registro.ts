@@ -27,7 +27,7 @@ export class Registro {
   ) {
     this.registerForm = this.fb.group({
       nombre: ['', Validators.required],
-      usuario: ['', Validators.required],
+      apellido: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       contraseña: ['', [Validators.required, Validators.minLength(6)]],
       confirmar_contraseña: ['', Validators.required],
@@ -38,8 +38,8 @@ export class Registro {
   get Nombre() {
     return this.registerForm.get('nombre');
   }
-  get Usuario() {
-    return this.registerForm.get('usuario');
+  get Apellido() {
+    return this.registerForm.get('apellido');
   }
   get Email() {
     return this.registerForm.get('email');
@@ -63,7 +63,6 @@ export class Registro {
           nombre: this.registerForm.get('nombre')?.value,
           apellido: this.registerForm.get('apellido')?.value,
           email: this.registerForm.get('email')?.value,
-          usuario: this.registerForm.get('usuario')?.value,
           contraseña: password,
         };
 

@@ -15,7 +15,7 @@
         <input
           formControlName="nombre"
           type="text"
-          placeholder="Nombre Completo"
+          placeholder="Nombre"
           required
           [class.is-valid]="Nombre?.valid && Nombre?.touched"
           [class.is-invalid]="Nombre?.invalid && Nombre?.touched"
@@ -28,17 +28,17 @@
         }
 
         <input
-          formControlName="usuario"
+          formControlName="apellido"
           type="text"
-          placeholder="Usuario"
+          placeholder="Apellido"
           required
-          [class.is-valid]="Usuario?.valid && Usuario?.touched"
-          [class.is-invalid]="Usuario?.invalid && Usuario?.touched"
+          [class.is-valid]="Apellido?.valid && Apellido?.touched"
+          [class.is-invalid]="Apellido?.invalid && Apellido?.touched"
         />
 
-        @if (Usuario?.invalid && Usuario?.touched) {
-          @if (Usuario?.hasError('required')) {
-            <p class="text-danger">El usuario es requerido</p>
+        @if (Apellido?.invalid && Apellido?.touched) {
+          @if (Apellido?.hasError('required')) {
+            <p class="text-danger">El apellido es requerido</p>
           }
         }
 

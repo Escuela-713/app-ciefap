@@ -44,8 +44,6 @@
   text-align: center;
 }
 
-
-
 .info-section button {
   padding: 0.8rem 1.5rem;
   background: white;
@@ -62,7 +60,6 @@
   color: #6c9207;
   transform: scale(1.05);
 }
-
 
 .form-section {
   width: 50%;
