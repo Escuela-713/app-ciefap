@@ -16,7 +16,7 @@
 }
 
 .tab.active {
-  background-color: #6c9207;
+  background-color: #183c3c;
   color: #fff;
 }
 
@@ -29,10 +29,12 @@
   background: #fff;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-input, select, button {
+input,
+select,
+button {
   display: block;
   width: 100%;
   margin-bottom: 0.8rem;
@@ -41,14 +43,14 @@ input, select, button {
   border: 1px solid #ccc;
 }
 
-button[type="submit"] {
-  background: #6c9207;
+button[type='submit'] {
+  background: #183c3c;
   color: white;
   border: none;
   cursor: pointer;
   font-weight: 500;
 }
 
-button[type="submit"]:hover {
-  background: #5a7b06;
+button[type='submit']:hover {
+  background: #132e2e;
 }
