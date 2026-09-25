@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgIf, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-calculator',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, CommonModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './calculator.html',
-  styleUrl: './calculator.css'
+  styleUrl: './calculator.css',
 })
 export class CalculatorComponent {
   parcelForm: FormGroup;
@@ -21,26 +20,38 @@ export class CalculatorComponent {
   constructor(private fb: FormBuilder) {
     this.parcelForm = this.fb.group({
       especie: ['alamo'], // valor fijo
-      distanciaFila: ['', Validators.required],
-      distanciaEntreFilas: ['', Validators.required],
-      cantidadArboles: ['', Validators.required],
-      edad: ['', Validators.required],
+      distanciaFila: ['', [Validators.required, Validators.min(0), Validators.max(50)]],
+      distanciaEntreFilas: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      cantidadArboles: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
+      edad: ['', [Validators.required, Validators.min(1), Validators.max(100)]],
     });
 
     this.treeForm = this.fb.group({
-      dap: ['', Validators.required],
-      altura: ['', Validators.required],
+      dap: ['', [Validators.required, Validators.min(10), Validators.max(1000)]],
+      altura: ['', [Validators.required, Validators.min(1), Validators.max(200)]],
     });
   }
 
   // getters
-  get distanciaFila() { return this.parcelForm.get('distanciaFila'); }
-  get distanciaEntreFilas() { return this.parcelForm.get('distanciaEntreFilas'); }
-  get cantidadArboles() { return this.parcelForm.get('cantidadArboles'); }
-  get edad() { return this.parcelForm.get('edad'); }
+  get distanciaFila() {
+    return this.parcelForm.get('distanciaFila');
+  }
+  get distanciaEntreFilas() {
+    return this.parcelForm.get('distanciaEntreFilas');
+  }
+  get cantidadArboles() {
+    return this.parcelForm.get('cantidadArboles');
+  }
+  get edad() {
+    return this.parcelForm.get('edad');
+  }
 
-  get dap() { return this.treeForm.get('dap'); }
-  get altura() { return this.treeForm.get('altura'); }
+  get dap() {
+    return this.treeForm.get('dap');
+  }
+  get altura() {
+    return this.treeForm.get('altura');
+  }
 
   calculateParcel(): void {
     if (this.parcelForm.valid) {
@@ -55,7 +66,7 @@ export class CalculatorComponent {
         tamano: tamanoParcela.toFixed(2),
         radio: radioParcela.toFixed(2),
         alturaDominante: alturaDominante.toFixed(2),
-        indiceSitio: indiceSitio.toFixed(2)
+        indiceSitio: indiceSitio.toFixed(2),
       };
 
       this.treeList = [];
@@ -74,31 +85,29 @@ export class CalculatorComponent {
     }
   }
 
-
   saveToHistory(): void {
-  if (!this.results || !this.treeList.length) {
-    alert('No hay resultados o árboles cargados para guardar.');
-    return;
+    if (!this.results || !this.treeList.length) {
+      alert('No hay resultados o árboles cargados para guardar.');
+      return;
+    }
+
+    // Construye el objeto a guardar
+    const record = {
+      fecha: new Date().toLocaleString(),
+      parcela: this.results,
+      arboles: this.treeList,
+    };
+
+    // aca obtiene el historial del localstorage
+    const existing = localStorage.getItem('historial');
+    const historial = existing ? JSON.parse(existing) : [];
+
+    // agrega el nuevo registro
+    historial.push(record);
+
+    // Guarda nuevamente
+    localStorage.setItem('historial', JSON.stringify(historial));
+
+    alert('Registro guardado en el historial');
   }
-
-  // Construye el objeto a guardar
-  const record = {
-    fecha: new Date().toLocaleString(),
-    parcela: this.results,
-    arboles: this.treeList
-  };
-
-  // aca obtiene el historial del localstorage
-  const existing = localStorage.getItem('historial');
-  const historial = existing ? JSON.parse(existing) : [];
-
-  // agrega el nuevo registro
-  historial.push(record);
-
-  // Guarda nuevamente
-  localStorage.setItem('historial', JSON.stringify(historial));
-
-  alert('Registro guardado en el historial');
-}
-
 }

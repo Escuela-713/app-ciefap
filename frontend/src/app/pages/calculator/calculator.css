@@ -1,56 +1,309 @@
-.tabs {
+.calculator-wrapper {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.calculator-wrapper h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #183c3c;
+  margin-bottom: 1.5rem;
+}
+
+.wizard-container {
+  position: relative;
   display: flex;
-  border-bottom: 2px solid #ccc;
-  margin-bottom: 1rem;
-  gap: 0.5rem;
+  background: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(24, 60, 60, 0.1);
+  border: 1px solid #cbd5e1;
+  min-height: 560px;
+  overflow: visible;
+  margin-right: 90px;
 }
 
-.tab {
-  background: #f1f1f1;
-  border: none;
-  padding: 0.6rem 1rem;
-  cursor: pointer;
-  border-radius: 6px 6px 0 0;
-  font-weight: 500;
-  transition: all 0.3s ease;
+/* lado izq */
+.wizard-card-main {
+  width: 50%;
+  padding: 3rem 2.5rem;
+  background: #ffffff;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.tab.active {
+.step-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #183c3c;
+  margin-bottom: 1.2rem;
+}
+
+.info-overlay-card {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  width: 52%;
   background-color: #183c3c;
-  color: #fff;
+  color: #ffffff;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  border-top-left-radius: 24px;
+  border-bottom-left-radius: 24px;
+  padding: 3.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: -15px 5px 35px rgba(0, 0, 0, 0.25);
+  z-index: 4;
 }
 
-.tab:disabled {
+.info-overlay-card h3 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 0.8rem;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.info-overlay-card .sub-text {
+  font-size: 1.2rem;
+  color: #a8dadc;
+  font-weight: 400;
+}
+
+.tutorial-link {
+  color: #a8dadc;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.tutorial-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* este es el contenedor de las cards de la derecha y le pise el z-index para q no se corten con la esquina redondeada del otro*/
+.tabs-sidebar {
+  position: absolute;
+  right: -80px;
+  top: 20px;
+  bottom: 20px;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+/* tarjetas de la derecha*/
+.side-tab-card {
+  flex: 1;
+  width: 70px;
+  background-color: #4a6363;
+  border: none;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #5c7676;
+  cursor: pointer;
+  box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1.2rem;
+  margin: 4px 0;
+}
+
+.side-tab-card:hover:not(:disabled) {
+  background-color: #3d5252;
+  width: 78px;
+}
+
+/* tarjeta active */
+.side-tab-card.active {
+  background-color: #ffffff;
+  color: #183c3c; /* Color del cuadrado verde */
+  width: 90px; /* Se agranda hacia la derecha y abajo */
+  box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.side-tab-card:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.parcel-calculator {
-  background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.calc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 
-input,
-select,
-button {
-  display: block;
+.input-group input {
   width: 100%;
-  margin-bottom: 0.8rem;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 0.95rem 1.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-button[type='submit'] {
-  background: #183c3c;
-  color: white;
+.input-group input:focus {
+  border-color: #183c3c;
+  box-shadow: 0 0 0 3px rgba(24, 60, 60, 0.1);
+}
+
+.readonly-group input {
+  background-color: #f8fafc;
+  color: #475569;
+}
+
+.action-btn {
+  background-color: #183c3c;
+  color: #ffffff;
   border: none;
+  padding: 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: 500;
+  transition: background-color 0.2s ease;
+  width: 100%;
 }
 
-button[type='submit']:hover {
-  background: #132e2e;
+.action-btn:hover {
+  background-color: #2a5c5c;
+}
+
+/* tabla */
+.table-container {
+  margin-top: 1rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.styled-table th {
+  background-color: #f8fafc;
+  color: #183c3c;
+  font-weight: 600;
+}
+
+.results-summary-table {
+  background: #f8fafc;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* rrsponsive */
+@media (max-width: 900px) {
+  .wizard-container {
+    flex-direction: column;
+    margin-right: 0;
+    min-height: auto;
+  }
+  .wizard-card-main,
+  .info-overlay-card {
+    width: 100%;
+    position: relative;
+    border-radius: 0;
+  }
+  .info-overlay-card {
+    min-height: 250px;
+  }
+  .tabs-sidebar {
+    position: relative;
+    right: 0;
+    top: 0;
+    height: 70px;
+    width: 100%;
+    flex-direction: row;
+  }
+  .side-tab-card {
+    flex: 1;
+    width: auto;
+    border-radius: 0;
+    padding: 0;
+    justify-content: center;
+  }
+  .side-tab-card.active,
+  .side-tab-card:hover:not(:disabled) {
+    width: auto;
+  }
+}
+/* --- estados de error en inputs --- */
+.input-group input.ng-invalid.ng-touched {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.input-group input.ng-invalid.ng-touched:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.error-text {
+  display: block;
+  margin-top: 0.4rem;
+  color: #dc2626;
+  font-size: 0.85rem;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease forwards;
+}
+.next-step-btn {
+  margin-top: 1.2rem;
+  background-color: #a8dadc;
+  color: #183c3c;
+}
+
+.next-step-btn:hover:not(:disabled) {
+  background-color: #8fc9cb;
+}
+
+.next-step-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
