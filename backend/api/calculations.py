@@ -1,5 +1,61 @@
 import math
+import os
+import re
+from dotenv import load_dotenv
 from typing import List, Dict, Optional
+from pathlib import Path
+
+
+env_path = Path(__file__).resolve().parent.parent / 'server' / '.env'
+load_dotenv(env_path)
+
+class FormulaEvaluator:
+    """Evalúa fórmulas simples desde .env"""
+    
+    def __init__(self):
+        self.formulas = {
+            'basal_area': os.getenv('FORMULA_BASAL_AREA'),
+        }
+    
+    def obtener_variables(self, nombre_formula):
+        """Extrae variables de una fórmula"""
+        formula = self.formulas.get(nombre_formula)
+        if not formula:
+            return []
+        
+        variables = re.findall(r'[a-zA-Z_]\w*', formula)
+        palabras_clave = {'math', 'pi', 'e', 'sin', 'cos', 'tan', 'log', 'sqrt', 'exp'}
+        return list(dict.fromkeys([v for v in variables if v not in palabras_clave]))
+    
+    def evaluar(self, nombre_formula, valores):
+        """Evalúa una fórmula con los valores dados"""
+        formula = self.formulas.get(nombre_formula)
+        
+        if not formula:
+            raise ValueError(f"Fórmula '{nombre_formula}' no encontrada")
+        
+        variables_necesarias = self.obtener_variables(nombre_formula)
+        
+        for var in variables_necesarias:
+            if var not in valores:
+                raise ValueError(f"Falta la variable '{var}'")
+        
+        try:
+            contexto = {
+                'math': math,
+                '__builtins__': {}
+            }
+            contexto.update(valores)
+            return eval(formula, contexto)
+        except Exception as e:
+            raise ValueError(f"Error al evaluar: {str(e)}")
+
+
+# Instancia global
+formula_eval = FormulaEvaluator()
+class FormulaEvaluator:
+    """Evalúa formulas simples desde .env"""
+
 
 
 def basal_area_m2(dap_cm: float) -> float:
@@ -179,3 +235,4 @@ def animals_per_ha_equilibrium(capture_kg_per_day_per_ha_value: float, animal_em
     if animal_emission_kg_day <= 0:
         return 0.0
     return capture_kg_per_day_per_ha_value / animal_emission_kg_day
+
