@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+from rest_framework.decorators import api_view #se sumó
 
 from .calculations import (
     basal_area_m2,
@@ -19,6 +20,7 @@ from .calculations import (
     carbon_forest_tn_per_ha,
     capture_kg_per_day_per_ha,
     animals_per_ha_equilibrium,
+    formula_eval, #esto se agregó
 )
 from .models import Measurement, Plot
 from .serializers import MeasurementSerializer
@@ -164,3 +166,35 @@ class MeasurementListCreateView(generics.ListCreateAPIView):
 class MeasurementRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Measurement.objects.all()
     serializer_class = MeasurementSerializer
+
+@api_view(['POST'])
+def calcular_basal_area(request):
+    try:
+        dap_cm = request.data.get('dap_cm')
+
+        if dap_cm is None:
+            return Response({
+                'exito': False,
+                'error': 'Se requiere dap_cm'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        dap_cm = float(dap_cm)
+
+        resultado = formula_eval.evaluar('basal_area', {'dap_cm': dap_cm})
+        resultado = round(resultado, 4)
+
+        return Response({
+            'exito': True,
+            'resultado': resultado,
+            'unidad': 'm2',
+            'dap_cm': dap_cm}, status=status.HTTP_200_OK)
+
+    except ValueError as e:
+        return Response({
+            'exito':  False,
+            'error': str(e)}, status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({
+           'exito': False,
+           'error': f'Error: {str(e)}' 
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
