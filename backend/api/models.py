@@ -58,5 +58,5 @@ class Measurement(models.Model):
     metrics = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self): #hola
         return f"Measurement #{self.pk} - {self.created_at:%Y-%m-%d %H:%M}"
