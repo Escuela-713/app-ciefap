@@ -77,77 +77,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
-
-# Database
-# Soporta:
-# - Variables estándar: DB_ENGINE, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
-# - Clever Cloud: MYSQL_ADDON_* y MYSQL_ADDON_URI
-def _get_mysql_config_from_env():
-    name = os.environ.get('DB_NAME')
-    user = os.environ.get('DB_USER')
-    password = os.environ.get('DB_PASSWORD')
-    host = os.environ.get('DB_HOST')
-    port = os.environ.get('DB_PORT')
-
-    # Si hay URI, parsearla
-    uri = os.environ.get('MYSQL_ADDON_URI') or os.environ.get('DATABASE_URL')
-    if uri:
-        parsed = urlparse(uri)
-        name = name or parsed.path.lstrip('/')
-        user = user or (parsed.username or '')
-        password = password or (parsed.password or '')
-        host = host or (parsed.hostname or 'localhost')
-        port = port or str(parsed.port or 3306)
-
-    # Fallback a variables MYSQL_ADDON_*
-    name = name or os.environ.get('MYSQL_ADDON_DB')
-    user = user or os.environ.get('MYSQL_ADDON_USER')
-    password = password or os.environ.get('MYSQL_ADDON_PASSWORD')
-    host = host or os.environ.get('MYSQL_ADDON_HOST')
-    port = port or os.environ.get('MYSQL_ADDON_PORT') or '3306'
-
-    return name, user, password, host, port
-
-
-use_mysql = (
-    os.environ.get('DB_ENGINE', '').lower() == 'mysql'
-    or any(
-        os.environ.get(k)
-        for k in ['DB_HOST', 'DB_NAME', 'MYSQL_ADDON_URI', 'MYSQL_ADDON_HOST', 'MYSQL_ADDON_DB']
-    )
-)
-
-if use_mysql:
-    _name, _user, _password, _host, _port = _get_mysql_config_from_env()
-    if not (_name and _user and _host):
-        # Si faltan datos críticos, usamos SQLite para evitar fallos en dev.
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': _name,
-                'USER': _user,
-                'PASSWORD': _password or '',
-                'HOST': _host,
-                'PORT': str(_port),
-                'OPTIONS': {
-                    'charset': 'utf8mb4',
-                },
-            }
-        }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    
 
 
 # Password validation
@@ -203,7 +139,6 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings (permitimos Angular dev server)
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
 ]

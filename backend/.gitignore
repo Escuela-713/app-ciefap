@@ -12,10 +12,13 @@ env/
 
 # Django
 *.log
-db.sqlite3
 db.sqlite3-journal
 /staticfiles/
 /media/
+
+# Migraciones (no trackear, pero mantener __init__.py)
+*/migrations/*
+!*/migrations/__init__.py
 
 # IDEs
 .vscode/
@@ -31,8 +34,10 @@ Thumbs.db
 # Node (Angular frontend)
 app-ciefap/node_modules/
 app-ciefap/dist/
-app-ciefap/.angular/
+app-ciefap/.angular
+
 
 # Environment variables
 .env
 .env.local
+
