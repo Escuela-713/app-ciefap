@@ -1,101 +1,257 @@
-<div class="parcel-calculator">
+<div class="calculator-wrapper">
   <h2>Calculadora</h2>
 
-<!-- Pestañas -->
-<div class="tabs">
-  <button 
-    class="tab" 
-    [class.active]="activeTab === 'parcela'"
-    (click)="activeTab = 'parcela'">
-    Datos de la parcela
-  </button>
+  <div class="wizard-container">
+    <!-- contenedor de lo de la izquierda -->
+    <div class="wizard-card-main">
+      <!-- paso 1 -->
+      @if (activeTab === 'parcela') {
+        <div class="step-content animate-fade">
+          <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()" class="calc-form">
+            <div class="input-group readonly-group">
+              <input type="text" value="Álamo (Especie predeterminada)" readonly />
+            </div>
 
-  <button 
-    class="tab" 
-    [class.active]="activeTab === 'arboles'"
-    (click)="activeTab = 'arboles'"
-    [disabled]="!results">
-    Árboles
-  </button>
+            <div class="input-group">
+              <input
+                formControlName="distanciaFila"
+                type="number"
+                placeholder="Distancia de árboles en fila (m)"
+              />
+              @if (distanciaFila?.touched && distanciaFila?.invalid) {
+                <small class="error-text">
+                  @if (distanciaFila?.errors?.['required']) {
+                    Este campo es obligatorio.
+                  }
+                  @if (distanciaFila?.errors?.['min']) {
+                    El valor no puede ser menor a 0.
+                  }
+                  @if (distanciaFila?.errors?.['max']) {
+                    El valor no puede superar 50.
+                  }
+                </small>
+              }
+            </div>
 
-  <button 
-    class="tab" 
-    [class.active]="activeTab === 'resultados'"
-    (click)="activeTab = 'resultados'"
-    [disabled]="!treeList.length">
-    Resultados
-  </button>
-</div>
+            <div class="input-group">
+              <input
+                formControlName="distanciaEntreFilas"
+                type="number"
+                placeholder="Distancia entre filas (m)"
+              />
+              @if (distanciaEntreFilas?.touched && distanciaEntreFilas?.invalid) {
+                <small class="error-text">
+                  @if (distanciaEntreFilas?.errors?.['required']) {
+                    Este campo es obligatorio.
+                  }
+                  @if (distanciaEntreFilas?.errors?.['min']) {
+                    El valor no puede ser menor a 0.
+                  }
+                  @if (distanciaEntreFilas?.errors?.['max']) {
+                    El valor no puede superar 100.
+                  }
+                </small>
+              }
+            </div>
 
-  <!-- PARCELA -->
-  <div *ngIf="activeTab === 'parcela'">
-    <form [formGroup]="parcelForm" (ngSubmit)="calculateParcel()">
+            <div class="input-group">
+              <input
+                formControlName="cantidadArboles"
+                type="number"
+                placeholder="Cantidad de árboles"
+              />
+              @if (cantidadArboles?.touched && cantidadArboles?.invalid) {
+                <small class="error-text">
+                  @if (cantidadArboles?.errors?.['required']) {
+                    Este campo es obligatorio.
+                  }
+                  @if (cantidadArboles?.errors?.['min']) {
+                    Debe haber al menos 1 árbol.
+                  }
+                  @if (cantidadArboles?.errors?.['max']) {
+                    No puede superar 1000 árboles.
+                  }
+                </small>
+              }
+            </div>
 
-      <div class="readonly-field">
-        <label>Especie:</label>
-        <input type="text" value="Álamo" readonly />
+            <div class="input-group">
+              <input formControlName="edad" type="number" placeholder="Edad (años)" />
+              @if (edad?.touched && edad?.invalid) {
+                <small class="error-text">
+                  @if (edad?.errors?.['required']) {
+                    Este campo es obligatorio.
+                  }
+                  @if (edad?.errors?.['min']) {
+                    La edad debe ser mayor a 1.
+                  }
+                  @if (edad?.errors?.['max']) {
+                    La edad no puede superar 100.
+                  }
+                </small>
+              }
+            </div>
+
+            <button type="submit" class="action-btn">Calcular Parcela</button>
+          </form>
+        </div>
+      }
+
+      <!-- paso 2 -->
+      @if (activeTab === 'arboles' && results) {
+        <div class="step-content animate-fade">
+          <h3>Árboles Individuales</h3>
+          <form [formGroup]="treeForm" (ngSubmit)="addTree()" class="calc-form inline-form">
+            <div class="input-group">
+              <input formControlName="dap" type="number" placeholder="DAP (cm)" />
+              @if (dap?.touched && dap?.invalid) {
+                <small class="error-text">
+                  @if (dap?.errors?.['required']) {
+                    Este campo es obligatorio.
+                  }
+                  @if (dap?.errors?.['min']) {
+                    El DAP debe ser mayor a 10.
+                  }
+                  @if (dap?.errors?.['max']) {
+                    El DAP no puede superar 1000.
+                  }
+                </small>
+              }
+            </div>
+
+            <div class="input-group">
+              <input formControlName="altura" type="number" placeholder="Altura (m)" />
+              @if (altura?.touched && altura?.invalid) {
+                <small class="error-text">
+                  @if (altura?.errors?.['required']) {
+                    Este campo es obligatorio.
+                  }
+                  @if (altura?.errors?.['min']) {
+                    La altura debe ser mayor a 1.
+                  }
+                  @if (altura?.errors?.['max']) {
+                    La altura no puede superar 200.
+                  }
+                </small>
+              }
+            </div>
+
+            <button type="submit" class="action-btn">Agregar árbol</button>
+          </form>
+
+          @if (treeList.length) {
+            <div class="table-container">
+              <h4>Árboles agregados ({{ treeList.length }})</h4>
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>DAP (cm)</th>
+                    <th>Altura (m)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (tree of treeList; track $index) {
+                    <tr>
+                      <td>{{ $index + 1 }}</td>
+                      <td>{{ tree.dap }}</td>
+                      <td>{{ tree.altura }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          <button
+            type="button"
+            class="action-btn next-step-btn"
+            [disabled]="!treeList.length"
+            (click)="activeTab = 'resultados'"
+          >
+            Ver resultados →
+          </button>
+        </div>
+      }
+
+      <!-- paso 3 -->
+      @if (activeTab === 'resultados' && treeList.length) {
+        <div class="step-content animate-fade">
+          <h3>Resultados de la Parcela</h3>
+          <table class="styled-table results-summary-table">
+            <tr>
+              <th>Tamaño parcela (m²)</th>
+              <td>{{ results.tamano }}</td>
+            </tr>
+            <tr>
+              <th>Radio parcela (m)</th>
+              <td>{{ results.radio }}</td>
+            </tr>
+            <tr>
+              <th>Altura dominante (m)</th>
+              <td>{{ results.alturaDominante }}</td>
+            </tr>
+            <tr>
+              <th>Índice de sitio (IS)</th>
+              <td>{{ results.indiceSitio }}</td>
+            </tr>
+          </table>
+
+          <button (click)="saveToHistory()" class="action-btn save-btn" style="margin-top: 1.5rem">
+            Guardar en historial
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- tarjeta verde -->
+    <div class="info-overlay-card">
+      <div class="info-content">
+        <h3>
+          @switch (activeTab) {
+            @case ('parcela') {
+              Datos de parcela
+            }
+            @case ('arboles') {
+              Carga de árboles
+            }
+            @default {
+              Resultados
+            }
+          }
+        </h3>
+        <p class="sub-text">lorem ipsum</p>
       </div>
+      <a routerLink="/tutorial" class="tutorial-link">Ver tutorial paso a paso</a>
+    </div>
 
-      <input formControlName="distanciaFila" type="number" placeholder="Distancia de árboles en fila (m)" />
-      <input formControlName="distanciaEntreFilas" type="number" placeholder="Distancia entre filas (m)" />
-      <input formControlName="cantidadArboles" type="number" placeholder="Cantidad de árboles" />
-      <input formControlName="edad" type="number" placeholder="Edad (años)" />
+    <!-- cards -->
+    <div class="tabs-sidebar">
+      <button
+        class="side-tab-card"
+        [class.active]="activeTab === 'parcela'"
+        (click)="activeTab = 'parcela'"
+      >
+        <span>1</span>
+      </button>
 
-      <button type="submit">Calcular Parcela</button>
-    </form>
-  </div>
+      <button
+        class="side-tab-card"
+        [class.active]="activeTab === 'arboles'"
+        (click)="activeTab = 'arboles'"
+        [disabled]="!results"
+      >
+        <span>2</span>
+      </button>
 
-  <!-- ARBOLES DATOS INDIVIDUALES -->
-  <div *ngIf="activeTab === 'arboles' && results">
-    <h3>Agregar árbol unitario</h3>
-    <form [formGroup]="treeForm" (ngSubmit)="addTree()">
-      <input formControlName="dap" type="number" placeholder="DAP (cm)" />
-      <input formControlName="altura" type="number" placeholder="Altura (m)" />
-      <button type="submit">Agregar árbol</button>
-    </form>
-
-    <div *ngIf="treeList.length" class="tree-table">
-      <h4>Árboles agregados</h4>
-      <table>
-        <thead>
-          <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let tree of treeList; index as i">
-            <td>{{ i + 1 }}</td>
-            <td>{{ tree.dap }}</td>
-            <td>{{ tree.altura }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <button
+        class="side-tab-card"
+        [class.active]="activeTab === 'resultados'"
+        (click)="activeTab = 'resultados'"
+        [disabled]="!treeList.length"
+      >
+        <span>3</span>
+      </button>
     </div>
   </div>
-
-<!-- RESULTADOS -->
-<div *ngIf="activeTab === 'resultados' && treeList.length">
-  <h3>Resultados de la parcela</h3>
-  <table>
-    <tr><th>Tamaño parcela (m²)</th><td>{{ results.tamano }}</td></tr>
-    <tr><th>Radio parcela (m)</th><td>{{ results.radio }}</td></tr>
-    <tr><th>Altura dominante (m)</th><td>{{ results.alturaDominante }}</td></tr>
-    <tr><th>Índice de sitio (IS)</th><td>{{ results.indiceSitio }}</td></tr>
-  </table>
-
-  <div *ngIf="treeList.length" class="tree-table">
-    <h4>Árboles individuales</h4>
-    <table>
-      <thead>
-        <tr><th>#</th><th>DAP (cm)</th><th>Altura (m)</th></tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let tree of treeList; index as i">
-          <td>{{ i + 1 }}</td>
-          <td>{{ tree.dap }}</td>
-          <td>{{ tree.altura }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-   <button (click)="saveToHistory()">Guardar en historial</button>
-
 </div>

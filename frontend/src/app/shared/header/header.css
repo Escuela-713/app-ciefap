@@ -1,5 +1,5 @@
 .navbar {
-  background-color: #6c9207;
+  background-color: #183c3c;
   color: #ffffff;
   padding: 0.8rem 1.5rem;
   position: sticky;
@@ -85,20 +85,20 @@
 
 /*botones*/
 nav .btn.login-btn {
-  background-color: #6c9207 !important;
-  color: #f8f9fa !important;
+  background-color: #a8dadc !important;
+  color: #183c3c !important;
   padding: 0.55rem 1.2rem;
   border-radius: 6px;
   font-weight: 500;
-  border: 1px solid #4e670a;
+  border: 1px solid #183c3c;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 nav .btn.login-btn:hover {
-  background-color: #6c9207 !important;
-  color: #ffffff !important;
-  border-color: #6c9207;
+  background-color: #94bbbc !important;
+  color: #183c3c !important;
+  border-color: #94bbbc;
   transform: translateY(-1px);
 }
 

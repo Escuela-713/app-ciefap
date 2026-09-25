@@ -1,24 +1,34 @@
-<section class="dashboard container mt-3 mb-3">
-  <h2 class="title">Panel Principal</h2>
-
-  <div class="cards">
-    <article class="card clickable" routerLink="/calculator" title="Abrir calculadora ALAMO">
-      <h3>ALAMO</h3>
-      <p>Toca para abrir la calculadora.</p>
-      <div class="card-action">
-        <span class="btn-text">Calcular</span>
-        <i class="bi bi-arrow-right"></i>
-      </div>
-    </article>
-    <!--- ACA SE OCULLTA LOS DATOS FORESTALES, YA QUE NO ES PRIORIDAD 
-    <article class="card clickable" routerLink="/forest-data" title="Gestionar datos forestales">
-      <h3>Datos Forestales</h3>
-      <p>Gestiona especies y datos de árboles desde archivos Excel.</p>
-      <div class="card-action">
-        <span class="btn-text">Gestionar</span>
-        <i class="bi bi-arrow-right"></i>
-      </div>
-    </article>   -->
-  
+<div class="dashboard-container">
+  <div class="welcome-banner">
+    <h2>Bienvenido a CIEFAPP</h2>
+    <p>Selecciona una de las opciones disponibles para comenzar a operar con las herramientas.</p>
   </div>
-</section>
+
+  <div class="tool-section">
+    <h3>Accesos Directos</h3>
+
+    <div class="tools-grid">
+      <!-- calculadora -->
+      <div class="tool-card">
+        <div class="tool-icon">🧮</div>
+        <h4>Calculadora ÁLAMO</h4>
+        <p>Accede al módulo de cálculo especializado para procesar variables forestales.</p>
+        <a routerLink="/calculator" class="tool-btn">Abrir Calculadora</a>
+      </div>
+      <!-- tutos -->
+      <div class="tool-card">
+        <div class="tool-icon">📖</div>
+        <h4>Tutoriales y Guías</h4>
+        <p>Consulta la documentación y los pasos recomendados para utilizar cada herramienta.</p>
+        <a routerLink="/tutorial" class="tool-btn">Ver Tutoriales</a>
+      </div>
+      <!-- historia-->
+      <div class="tool-card">
+        <div class="tool-icon">📜</div>
+        <h4>Historial de Cálculos</h4>
+        <p>Revisa el registro de operaciones anteriores y los resultados guardados.</p>
+        <a routerLink="/historial" class="tool-btn">Ver Historial</a>
+      </div>
+    </div>
+  </div>
+</div>
