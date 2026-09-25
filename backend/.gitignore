@@ -16,9 +16,8 @@ db.sqlite3-journal
 /staticfiles/
 /media/
 
-# Migraciones (no trackear, pero mantener __init__.py)
-*/migrations/*
-!*/migrations/__init__.py
+# Migraciones (ignorar completamente)
+*/migrations/
 
 # IDEs
 .vscode/
