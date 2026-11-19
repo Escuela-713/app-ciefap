@@ -15,6 +15,13 @@ class FormulaEvaluator:
     def __init__(self):
         self.formulas = {
             'basal_area': os.getenv('FORMULA_BASAL_AREA'),
+            'volumen_total_cc': os.getenv('FORMULA_VOLUMEN_TOTAL_CC'),
+            'volumen_total_sc': os.getenv('FORMULA_VOLUMEN_TOTAL_SC'),
+            'volumen_maderable_cc': os.getenv('FORMULA_VOLUMEN_MADERABLE_CC'),
+            'volumen_maderable_sc': os.getenv('FORMULA_VOLUMEN_MADERABLE_SC'),
+            'biomasa_aerea_total': os.getenv('FORMULA_BIOMASA_AEREA_TOTAL'),
+            'biomasa_raiz': os.getenv('FORMULA_BIOMASA_RAIZ'),
+            'biomasa_total': os.getenv('FORMULA_BIOMASA_TOTAL')
         }
     
     def obtener_variables(self, nombre_formula):

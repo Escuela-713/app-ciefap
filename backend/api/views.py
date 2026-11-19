@@ -169,32 +169,149 @@ class MeasurementRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView)
 
 @api_view(['POST'])
 def calcular_basal_area(request):
-    try:
-        dap_cm = request.data.get('dap_cm')
+    
+    dap_cm = request.data.get('dap_cm')
 
-        if dap_cm is None:
-            return Response({
-                'exito': False,
-                'error': 'Se requiere dap_cm'
-            }, status=status.HTTP_400_BAD_REQUEST)
+    dap_cm = float(dap_cm)
 
-        dap_cm = float(dap_cm)
+    resultado = formula_eval.evaluar('basal_area', {'dap_cm': dap_cm})
+    resultado = round(resultado, 4)
 
-        resultado = formula_eval.evaluar('basal_area', {'dap_cm': dap_cm})
-        resultado = round(resultado, 4)
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'unidad': 'm2',
+        'dap_cm': dap_cm}, status=status.HTTP_200_OK)
 
-        return Response({
-            'exito': True,
-            'resultado': resultado,
-            'unidad': 'm2',
-            'dap_cm': dap_cm}, status=status.HTTP_200_OK)
+@api_view(['POST'])
+def calcular_volumen_total_cc(request):
+    
+    dap_cm = request.data.get('dap_cm')
+    height_m = request.data.get('height_m')
 
-    except ValueError as e:
-        return Response({
-            'exito':  False,
-            'error': str(e)}, status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({
-           'exito': False,
-           'error': f'Error: {str(e)}' 
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    dap_cm = float(dap_cm)
+    height_m = float(height_m)
+
+    resultado = formula_eval.evaluar('volumen_total_cc', {'dap_cm': dap_cm, 'height_m': height_m})
+    resultado = round(resultado, 4)
+
+
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'dap_cm': dap_cm,
+        'height_m': height_m}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def calcular_volumen_total_sc(request):
+    
+    dap_cm = request.data.get('dap_cm')
+    height_m = request.data.get('height_m')
+
+
+    dap_cm = float(dap_cm)
+    height_m = float(height_m)
+
+    resultado = formula_eval.evaluar('volumen_total_sc', {'dap_cm': dap_cm, 'height_m': height_m})
+    resultado = round(resultado, 4)
+
+
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'dap_cm': dap_cm,
+        'height_m': height_m}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def calcular_volumen_maderable_cc(request):
+    
+    dap_cm = request.data.get('dap_cm')
+    height_m = request.data.get('height_m')
+
+
+    dap_cm = float(dap_cm)
+    height_m = float(height_m)
+
+    resultado = formula_eval.evaluar('volumen_maderable_cc', {'dap_cm': dap_cm, 'height_m': height_m})
+    resultado = round(resultado, 4)
+
+
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'dap_cm': dap_cm,
+        'height_m': height_m}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def calcular_volumen_maderable_sc(request):
+    
+    dap_cm = request.data.get('dap_cm')
+    height_m = request.data.get('height_m')
+
+
+    dap_cm = float(dap_cm)
+    height_m = float(height_m)
+
+    resultado = formula_eval.evaluar('volumen_maderable_sc', {'dap_cm': dap_cm, 'height_m': height_m})
+    resultado = round(resultado, 4)
+
+
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'dap_cm': dap_cm,
+        'height_m': height_m}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def calcular_biomasa_aerea_total(request):
+    
+    dap_cm = request.data.get('dap_cm')
+    height_m = request.data.get('height_m')
+
+    dap_cm = float(dap_cm)
+    height_m = float(height_m)
+
+    resultado = formula_eval.evaluar('biomasa_aerea_total', {'dap_cm': dap_cm, 'height_m': height_m})
+    resultado = round(resultado, 4)
+
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'unidad': 'm2',
+        'dap_cm': dap_cm}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def calcular_biomasa_raiz(request):
+
+    valores = {
+        'dap_cm': float(request.data['dap_cm']),
+        'height_m': float(request.data['height_m']),
+    }
+
+    biomasa_aerea_total = formula_eval.evaluar('biomasa_aerea_total', valores)
+    biomasa_raiz = formula_eval.evaluar('biomasa_raiz', {'biomasa_aerea_total': biomasa_aerea_total})
+
+    return Response({
+        'exito': True, 
+        'resultado': round(biomasa_raiz, 4), 
+        'unidad': 'kg'
+    })
+
+@api_view(['POST'])
+def calcular_biomasa_total(request):
+
+    valores = {
+        'dap_cm': float(request.data['dap_cm']),
+        'height_m': float(request.data['height_m']),
+    }
+
+    biomasa_aerea_total = formula_eval.evaluar('biomasa_aerea_total', valores)
+    biomasa_raiz = formula_eval.evaluar('biomasa_raiz', {'biomasa_aerea_total': biomasa_aerea_total})
+    biomasa_total = formula_eval.evaluar('biomasa_total', {'biomasa_aerea_total': biomasa_aerea_total, 'biomasa_raiz': biomasa_raiz})
+
+    return Response({
+        'exito': True, 
+        'resultado': round(biomasa_total, 4), 
+        'unidad': 'kg'
+    })
