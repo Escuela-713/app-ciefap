@@ -307,3 +307,40 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Estilos para el Pop-up / Modal centrado en pantalla completa */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Muy alto para que flote por encima de absolutamente todo */
+  animation: fadeIn 0.2s ease forwards;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+  color: #183c3c;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.modal-content p {
+  color: #475569;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}

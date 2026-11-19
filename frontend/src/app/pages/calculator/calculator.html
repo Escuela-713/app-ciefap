@@ -1,6 +1,17 @@
 <div class="calculator-wrapper">
   <h2>Calculadora</h2>
 
+  <!-- MODAL MOVIDO AQUÍ PARA ASEGURAR QUE CUBRA TODA LA PANTALLA CORRECTAMENTE -->
+  @if (showSuccessModal) {
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <h3>¡Cálculos guardados con éxito!</h3>
+        <p>Tus datos y registros de árboles se han almacenado correctamente en la base de datos.</p>
+        <button (click)="closeModal()" class="action-btn">Cerrar</button>
+      </div>
+    </div>
+  }
+
   <div class="wizard-container">
     <!-- contenedor de lo de la izquierda -->
     <div class="wizard-card-main">
@@ -92,7 +103,7 @@
               }
             </div>
 
-            <button type="submit" class="action-btn">Calcular Parcela</button>
+            <button type="submit" class="action-btn">Siguiente paso</button>
           </form>
         </div>
       }
@@ -100,7 +111,8 @@
       <!-- paso 2 -->
       @if (activeTab === 'arboles' && results) {
         <div class="step-content animate-fade">
-          <h3>Árboles Individuales</h3>
+          <h3>Árboles Individuales ({{ treeList.length }} / {{ maxArbolesPermitidos }})</h3>
+
           <form [formGroup]="treeForm" (ngSubmit)="addTree()" class="calc-form inline-form">
             <div class="input-group">
               <input formControlName="dap" type="number" placeholder="DAP (cm)" />
@@ -136,12 +148,18 @@
               }
             </div>
 
-            <button type="submit" class="action-btn">Agregar árbol</button>
+            <button
+              type="submit"
+              class="action-btn"
+              [disabled]="treeList.length >= maxArbolesPermitidos"
+            >
+              {{ treeList.length >= maxArbolesPermitidos ? 'Cupo completo' : 'Agregar árbol' }}
+            </button>
           </form>
 
           @if (treeList.length) {
             <div class="table-container">
-              <h4>Árboles agregados ({{ treeList.length }})</h4>
+              <h4>Árboles agregados</h4>
               <table class="styled-table">
                 <thead>
                   <tr>
@@ -166,16 +184,16 @@
           <button
             type="button"
             class="action-btn next-step-btn"
-            [disabled]="!treeList.length"
-            (click)="activeTab = 'resultados'"
+            [disabled]="treeList.length !== maxArbolesPermitidos"
+            (click)="saveAndShowResults()"
           >
-            Ver resultados →
+            Guardar y ver resultados parciales →
           </button>
         </div>
       }
 
       <!-- paso 3 -->
-      @if (activeTab === 'resultados' && treeList.length) {
+      @if (activeTab === 'resultados' && results) {
         <div class="step-content animate-fade">
           <h3>Resultados de la Parcela</h3>
           <table class="styled-table results-summary-table">
@@ -197,8 +215,8 @@
             </tr>
           </table>
 
-          <button (click)="saveToHistory()" class="action-btn save-btn" style="margin-top: 1.5rem">
-            Guardar en historial
+          <button (click)="goToHistory()" class="action-btn save-btn" style="margin-top: 1.5rem">
+            Ver detalle
           </button>
         </div>
       }
@@ -225,7 +243,7 @@
       <a routerLink="/tutorial" class="tutorial-link">Ver tutorial paso a paso</a>
     </div>
 
-    <!-- cards -->
+    <!-- cards laterales -->
     <div class="tabs-sidebar">
       <button
         class="side-tab-card"
@@ -248,7 +266,7 @@
         class="side-tab-card"
         [class.active]="activeTab === 'resultados'"
         (click)="activeTab = 'resultados'"
-        [disabled]="!treeList.length"
+        [disabled]="!results"
       >
         <span>3</span>
       </button>
