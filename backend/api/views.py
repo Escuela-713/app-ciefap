@@ -22,8 +22,8 @@ from .calculations import (
     animals_per_ha_equilibrium,
     formula_eval, #esto se agregó
 )
-from .models import Measurement, Plot
-from .serializers import MeasurementSerializer
+from .models import Plantacion, Medicion, ArbolMedido
+from .serializers import PlantacionSerializer, MedicionSerializer, ArbolMedidoSerializer
 
 
 class PlotMetricsView(APIView):
@@ -175,6 +175,22 @@ def calcular_basal_area(request):
     dap_cm = float(dap_cm)
 
     resultado = formula_eval.evaluar('basal_area', {'dap_cm': dap_cm})
+    resultado = round(resultado, 4)
+
+    return Response({
+        'exito': True,
+        'resultado': resultado,
+        'unidad': 'm2',
+        'dap_cm': dap_cm}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def calcular_diametro_altura_pecho(request):
+    
+    dap_cm = request.data.get('dap_cm')
+
+    dap_cm = float(dap_cm)
+
+    resultado = formula_eval.evaluar('diametro_altura_pecho', {'dap_cm': dap_cm})
     resultado = round(resultado, 4)
 
     return Response({

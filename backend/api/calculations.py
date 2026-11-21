@@ -15,6 +15,7 @@ class FormulaEvaluator:
     def __init__(self):
         self.formulas = {
             'basal_area': os.getenv('FORMULA_BASAL_AREA'),
+            'diametro_altura_pecho': os.getenv('FORMULA_DIAMETRO_ALTURA_PECHO'),
             'volumen_total_cc': os.getenv('FORMULA_VOLUMEN_TOTAL_CC'),
             'volumen_total_sc': os.getenv('FORMULA_VOLUMEN_TOTAL_SC'),
             'volumen_maderable_cc': os.getenv('FORMULA_VOLUMEN_MADERABLE_CC'),

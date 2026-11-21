@@ -4,6 +4,7 @@ from .views import (
     MeasurementListCreateView,
     MeasurementRetrieveUpdateDeleteView,
     calcular_basal_area,
+    calcular_diametro_altura_pecho,
     calcular_volumen_total_cc,
     calcular_volumen_total_sc,
     calcular_volumen_maderable_cc,
@@ -19,6 +20,7 @@ urlpatterns = [
     path('records/<int:pk>', MeasurementRetrieveUpdateDeleteView.as_view(), name='measurement-rud'),
 
 path('basal-area/', calcular_basal_area, name='basal-area'),
+path('diametro-altura-pecho/', calcular_diametro_altura_pecho, name='diametro-altura-pecho'),
 path('volumen-total-cc/', calcular_volumen_total_cc, name='volumen-total-cc'),
 path('volumen-total-sc/', calcular_volumen_total_sc, name='volumen-total-sc'),
 path('volumen-maderable-cc/', calcular_volumen_maderable_cc, name='volumen-maderable-cc'),

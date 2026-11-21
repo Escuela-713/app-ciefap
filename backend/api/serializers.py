@@ -1,41 +1,21 @@
 from rest_framework import serializers
-from .models import Producer, Species, Plot, Tree, Measurement
+from .models import Plantacion, Medicion, ArbolMedido
 
 
-class ProducerSerializer(serializers.ModelSerializer):
+class PlantacionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Producer
-        fields = ['id', 'name']
+        model = Plantacion
+        fields = '__all__'
 
-
-class SpeciesSerializer(serializers.ModelSerializer):
+class MedicionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Species
-        fields = ['id', 'name', 'biomass_above_a', 'biomass_above_b', 'root_ratio']
+        model = Medicion
+        fields = '__all__'
 
-
-class TreeSerializer(serializers.ModelSerializer):
+class ArbolMedidoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tree
-        fields = ['id', 'number', 'dap_cm', 'height_m']
+        model = ArbolMedido
+        fields = '__all__'
 
 
-class PlotSerializer(serializers.ModelSerializer):
-    producer = ProducerSerializer(read_only=True)
-    species = SpeciesSerializer(read_only=True)
-    trees = TreeSerializer(many=True, read_only=True)
 
-    class Meta:
-        model = Plot
-        fields = [
-            'id', 'producer', 'species', 'site_class',
-            'distance_in_row_m', 'distance_between_rows_m',
-            'radius_m', 'age_years', 'dominant_height_m',
-            'trees'
-        ]
-
-
-class MeasurementSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Measurement
-        fields = ['id', 'plot', 'input_data', 'metrics', 'created_at']
