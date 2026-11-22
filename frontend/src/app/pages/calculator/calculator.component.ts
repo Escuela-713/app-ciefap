@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CalculatorService } from '../../service/calculator.service';
 
 @Component({
   selector: 'app-calculator',
@@ -15,9 +16,10 @@ export class CalculatorComponent {
   results: any = null;
   treeList: { dap: number; altura: number }[] = [];
 
-  // Control de límites y popups
+  // Control de límites, carga y popups
   maxArbolesPermitidos: number = 0;
   showSuccessModal: boolean = false;
+  isSubmitting: boolean = false;
 
   // pestaña activa
   activeTab: 'parcela' | 'arboles' | 'resultados' = 'parcela';
@@ -25,6 +27,7 @@ export class CalculatorComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private calculatorService: CalculatorService,
   ) {
     this.parcelForm = this.fb.group({
       especie: ['alamo'], // valor fijo
@@ -62,21 +65,10 @@ export class CalculatorComponent {
 
   calculateParcel(): void {
     if (this.parcelForm.valid) {
-      const { distanciaFila, distanciaEntreFilas, cantidadArboles, edad } = this.parcelForm.value;
+      const { cantidadArboles } = this.parcelForm.value;
 
-      this.maxArbolesPermitidos = cantidadArboles;
-      const tamanoParcela = distanciaFila * distanciaEntreFilas * cantidadArboles;
-      const radioParcela = Math.sqrt(tamanoParcela / Math.PI);
-      const alturaDominante = edad * 0.5;
-      const indiceSitio = alturaDominante / edad;
-
-      this.results = {
-        tamano: tamanoParcela.toFixed(2),
-        radio: radioParcela.toFixed(2),
-        alturaDominante: alturaDominante.toFixed(2),
-        indiceSitio: indiceSitio.toFixed(2),
-      };
-
+      this.maxArbolesPermitidos = Number(cantidadArboles);
+      this.results = {};
       this.treeList = [];
       this.activeTab = 'arboles';
     } else {
@@ -93,15 +85,20 @@ export class CalculatorComponent {
         return;
       }
 
-      this.treeList.push({ ...this.treeForm.value });
+      this.treeList.push({
+        dap: Number(this.treeForm.value.dap),
+        altura: Number(this.treeForm.value.altura),
+      });
       this.treeForm.reset();
     } else {
       this.treeForm.markAllAsTouched();
     }
   }
 
-  // Guardar y avanzar a resultados (Fase 3)
+  // Calcular en el back, guardar en BD y avanzar a resultados (Fase 3)
   saveAndShowResults(): void {
+    if (this.isSubmitting) return;
+
     if (this.treeList.length !== this.maxArbolesPermitidos) {
       alert(
         `Debes cargar exactamente ${this.maxArbolesPermitidos} árboles. Actualmente tienes ${this.treeList.length}.`,
@@ -109,21 +106,83 @@ export class CalculatorComponent {
       return;
     }
 
-    // Guardado automático en localStorage (simulando BD)
-    const record = {
-      fecha: new Date().toLocaleString(),
-      parcela: this.results,
-      arboles: this.treeList,
+    this.isSubmitting = true;
+
+    const { especie, distanciaFila, distanciaEntreFilas, cantidadArboles, edad } =
+      this.parcelForm.value;
+    const distFilaNum = Number(distanciaFila);
+    const distEntreFilasNum = Number(distanciaEntreFilas);
+    const cantArbolesNum = Number(cantidadArboles);
+    const edadNum = Number(edad);
+
+    const calcPayload = {
+      trees: this.treeList.map((t) => ({
+        dap_cm: t.dap,
+        height_m: t.altura,
+      })),
+      distance_in_row_m: distFilaNum,
+      distance_between_rows_m: distEntreFilasNum,
+      min_trees_for_plot: cantArbolesNum,
+      age_years: edadNum,
     };
 
-    const existing = localStorage.getItem('historial');
-    const historial = existing ? JSON.parse(existing) : [];
-    historial.push(record);
-    localStorage.setItem('historial', JSON.stringify(historial));
+    this.calculatorService.calculateMetrics(calcPayload).subscribe({
+      next: (metricsRes) => {
+        const recordPayload = {
+          input_data: {
+            especie,
+            distanciaFila: distFilaNum,
+            distanciaEntreFilas: distEntreFilasNum,
+            cantidadArboles: cantArbolesNum,
+            edad: edadNum,
+            trees: this.treeList,
+          },
+          metrics: metricsRes,
+        };
 
-    // Cambiar a pestaña resultados y mostrar el popup
-    this.activeTab = 'resultados';
-    this.showSuccessModal = true;
+        this.calculatorService.saveMeasurement(recordPayload).subscribe({
+          next: () => {
+            const tamanoParcela =
+              metricsRes?.plot?.provided_area_m2 ??
+              metricsRes?.plot?.recommended_area_m2_for_min_trees ??
+              distFilaNum * distEntreFilasNum * cantArbolesNum;
+
+            const radioParcela =
+              metricsRes?.plot?.radius_from_provided_area_m ??
+              metricsRes?.plot?.recommended_radius_m ??
+              0;
+
+            const alturaDominante =
+              metricsRes?.site?.dominant_height_from_site_index_m ??
+              metricsRes?.aggregates?.height_mean_m ??
+              0;
+
+            const indiceSitio = metricsRes?.site?.site_index_from_dominant_height_m ?? '-';
+
+            this.results = {
+              tamano: Number(tamanoParcela).toFixed(2),
+              radio: Number(radioParcela).toFixed(2),
+              alturaDominante: Number(alturaDominante).toFixed(2),
+              indiceSitio: indiceSitio === '-' ? '-' : Number(indiceSitio).toFixed(2),
+            };
+
+            this.isSubmitting = false;
+            this.activeTab = 'resultados';
+            this.showSuccessModal = true;
+          },
+          error: (err) => {
+            console.error('Error al guardar en la base de datos:', err);
+            this.isSubmitting = false;
+            alert('Se calcularon los datos, pero hubo un error al guardar en el historial.');
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Error al calcular en el backend:', err);
+        this.isSubmitting = false;
+        alert('No se pudo conectar con el backend para calcular.');
+      },
+    });
   }
 
   closeModal(): void {
