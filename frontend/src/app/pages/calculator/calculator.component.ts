@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-calculator',
@@ -14,10 +15,17 @@ export class CalculatorComponent {
   results: any = null;
   treeList: { dap: number; altura: number }[] = [];
 
+  // Control de límites y popups
+  maxArbolesPermitidos: number = 0;
+  showSuccessModal: boolean = false;
+
   // pestaña activa
   activeTab: 'parcela' | 'arboles' | 'resultados' = 'parcela';
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+  ) {
     this.parcelForm = this.fb.group({
       especie: ['alamo'], // valor fijo
       distanciaFila: ['', [Validators.required, Validators.min(0), Validators.max(50)]],
@@ -45,7 +53,6 @@ export class CalculatorComponent {
   get edad() {
     return this.parcelForm.get('edad');
   }
-
   get dap() {
     return this.treeForm.get('dap');
   }
@@ -57,6 +64,7 @@ export class CalculatorComponent {
     if (this.parcelForm.valid) {
       const { distanciaFila, distanciaEntreFilas, cantidadArboles, edad } = this.parcelForm.value;
 
+      this.maxArbolesPermitidos = cantidadArboles;
       const tamanoParcela = distanciaFila * distanciaEntreFilas * cantidadArboles;
       const radioParcela = Math.sqrt(tamanoParcela / Math.PI);
       const alturaDominante = edad * 0.5;
@@ -70,7 +78,7 @@ export class CalculatorComponent {
       };
 
       this.treeList = [];
-      this.activeTab = 'arboles'; // pasa automáticamente a la siguiente pestaña
+      this.activeTab = 'arboles';
     } else {
       this.parcelForm.markAllAsTouched();
     }
@@ -78,6 +86,13 @@ export class CalculatorComponent {
 
   addTree(): void {
     if (this.treeForm.valid) {
+      if (this.treeList.length >= this.maxArbolesPermitidos) {
+        alert(
+          `Ya has alcanzado el límite de ${this.maxArbolesPermitidos} árboles indicados en la fase 1.`,
+        );
+        return;
+      }
+
       this.treeList.push({ ...this.treeForm.value });
       this.treeForm.reset();
     } else {
@@ -85,29 +100,37 @@ export class CalculatorComponent {
     }
   }
 
-  saveToHistory(): void {
-    if (!this.results || !this.treeList.length) {
-      alert('No hay resultados o árboles cargados para guardar.');
+  // Guardar y avanzar a resultados (Fase 3)
+  saveAndShowResults(): void {
+    if (this.treeList.length !== this.maxArbolesPermitidos) {
+      alert(
+        `Debes cargar exactamente ${this.maxArbolesPermitidos} árboles. Actualmente tienes ${this.treeList.length}.`,
+      );
       return;
     }
 
-    // Construye el objeto a guardar
+    // Guardado automático en localStorage (simulando BD)
     const record = {
       fecha: new Date().toLocaleString(),
       parcela: this.results,
       arboles: this.treeList,
     };
 
-    // aca obtiene el historial del localstorage
     const existing = localStorage.getItem('historial');
     const historial = existing ? JSON.parse(existing) : [];
-
-    // agrega el nuevo registro
     historial.push(record);
-
-    // Guarda nuevamente
     localStorage.setItem('historial', JSON.stringify(historial));
 
-    alert('Registro guardado en el historial');
+    // Cambiar a pestaña resultados y mostrar el popup
+    this.activeTab = 'resultados';
+    this.showSuccessModal = true;
+  }
+
+  closeModal(): void {
+    this.showSuccessModal = false;
+  }
+
+  goToHistory(): void {
+    this.router.navigate(['/historial']);
   }
 }
