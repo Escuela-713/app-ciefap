@@ -1,171 +1,223 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework import generics
-from rest_framework.decorators import api_view #se sumó
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import math
 
-from .calculations import (
-    basal_area_m2,
-    volume_total_cc_m3,
-    volume_total_sc_m3,
-    volume_merchantable15_cc_m3,
-    volume_merchantable15_sc_m3,
-    biomass_above_kg,
-    biomass_root_kg,
-    aggregate_plot_metrics,
-    dominant_height_from_site_index,
-    site_index_from_dominant_height,
-    recommended_plot_area_m2,
-    plot_radius_from_area_m,
-    carbon_forest_tn_per_ha,
-    capture_kg_per_day_per_ha,
-    animals_per_ha_equilibrium,
-    formula_eval, #esto se agregó
-)
+from .calculations import formula_eval
 from .models import Plantacion, Medicion, ArbolMedido
-from .serializers import PlantacionSerializer, MedicionSerializer, ArbolMedidoSerializer
+from .serializers import (
+    InputPlantacionSerializer,
+    InputMedicionSerializer,
+    PlantacionSerializer,
+)
 
 
-class PlotMetricsView(APIView):
-    def post(self, request):
-        data = request.data or {}
-        trees = data.get("trees", [])
-        dist_in_row_m = float(data.get("distance_in_row_m", 0))
-        dist_between_rows_m = float(data.get("distance_between_rows_m", 0))
-        plot_area_m2 = float(data.get("plot_area_m2", 0))
-        min_trees_for_plot = int(data.get("min_trees_for_plot", 20))
-        age_years = float(data.get("age_years", 0))
-        animal_emission_kg_day = float(data.get("animal_emission_kg_day", 5.0))
-        site_index_m = data.get("site_index_m")
-        dominant_height_m_input = data.get("dominant_height_m")
-        root_ratio = float(data.get("species_root_ratio", 0.263))
+def calcular_arbol(dap, height):
+    ev = formula_eval.evaluar
+    dimensiones_arbol = {'dap_cm': dap, 'height_m': height}
 
-        # Validación mínima
-        if not isinstance(trees, list) or len(trees) == 0:
-            return Response({"detail": "Debe proporcionar una lista 'trees' con dap_cm y height_m."}, status=status.HTTP_400_BAD_REQUEST)
+    biomasa_aerea = ev('biomasa_aerea_total', dimensiones_arbol)
+    biomasa_raiz_arbol = ev('biomasa_raiz', {'biomasa_aerea_total': biomasa_aerea})
 
-        # Cálculo por árbol
-        per_tree = []
-        for t in trees:
-            dap = float(t.get("dap_cm", 0))
-            h = float(t.get("height_m", 0))
-            b_above = biomass_above_kg(dap, h)
-            b_root = biomass_root_kg(b_above, root_ratio)
-            per_tree.append({
-                "dap_cm": dap,
-                "height_m": h,
-                "ab_m2": round(basal_area_m2(dap), 4),
-                "vol_total_cc_m3": round(volume_total_cc_m3(dap, h), 4),
-                "vol_total_sc_m3": round(volume_total_sc_m3(dap, h), 4),
-                "vol_maderable15_cc_m3": round(volume_merchantable15_cc_m3(dap, h), 4),
-                "vol_maderable15_sc_m3": round(volume_merchantable15_sc_m3(dap, h), 4),
-                "biomass_above_kg": round(b_above, 3),
-                "biomass_root_kg": round(b_root, 3),
-                "biomass_total_kg": round(b_above + b_root, 3),
-            })
+    return {
+        'dap_cm': dap,
+        'height_m': height,
+        'basal_area': ev('basal_area', {'dap_cm': dap}),
+        'volumen_total_cc': ev('volumen_total_cc', dimensiones_arbol),
+        'volumen_total_sc': ev('volumen_total_sc', dimensiones_arbol),
+        'volumen_maderable_cc': ev('volumen_maderable_cc', dimensiones_arbol),
+        'volumen_maderable_sc': ev('volumen_maderable_sc', dimensiones_arbol),
+        'biomasa_aerea_total': biomasa_aerea,
+        'biomasa_raiz': biomasa_raiz_arbol,
+        'biomasa_total': ev(
+            'biomasa_total',
+            {'biomasa_aerea_total': biomasa_aerea, 'biomasa_raiz': biomasa_raiz_arbol},
+        ),
+    }
 
-        # Agregados de parcela / hectárea
-        agg = aggregate_plot_metrics(
-            trees,
-            dist_in_row_m,
-            dist_between_rows_m,
-            plot_area_m2=plot_area_m2,
-            age_years=age_years,
-            animal_emission_kg_day=animal_emission_kg_day,
-            root_ratio=root_ratio,
+def calcular_altura_dominante(filas, tamano_parcela):
+    """Promedio de altura de los troncos más gruesos: 100 por hectárea, por regla de 3."""
+    cantidad = max(1, int(100 * tamano_parcela / 10000))
+    mas_gruesos = sorted(filas, key=lambda fila: fila['dap_cm'], reverse=True)[:cantidad]
+    return sum(fila['height_m'] for fila in mas_gruesos) / len(mas_gruesos)
+
+def calcular_parcela(fila, entre_fila, cantidad_arboles):
+    ev = formula_eval.evaluar
+    tamano = ev('tamano_parcela', {'dis_arboles_fila': fila, 'dis_arboles_entre_fila': entre_fila})
+    radio = ev('radio_parcela', {'tamano_parcela': tamano})
+    arboles_ha = ev('arboles_ha', {'cantidad_arboles': cantidad_arboles, 'tamano_parcela': tamano})
+    return tamano, radio, arboles_ha
+
+def redondear_dos_decimales(fila):
+    return {
+        clave: round(valor, 2) if isinstance(valor, float) else valor
+        for clave, valor in fila.items()
+    }
+
+@api_view(['POST'])
+def crear_plantacion(request):
+    entrada = InputPlantacionSerializer(data=request.data)
+    entrada.is_valid(raise_exception=True)
+    datos = entrada.validated_data
+    ev = formula_eval.evaluar
+
+    tamano = ev('tamano_parcela', {
+        'cantidad_arboles': datos['cantidad_arboles'],
+        'dis_arboles_fila': datos['dis_arboles_fila'],
+        'dis_arboles_entre_fila': datos['dis_arboles_entre_fila'],
+    })
+    radio = ev('radio_parcela', {'tamano_parcela': tamano})
+
+    plantacion = Plantacion.objects.create(
+        dis_arboles_fila=datos['dis_arboles_fila'],
+        dis_arboles_entre_fila=datos['dis_arboles_entre_fila'],
+        cantidad_arboles=datos['cantidad_arboles'],
+        tamano_parcela=tamano,
+        radio_parcela=radio,
+    )
+
+    return Response(
+        {'exito': True, 'plantacion': PlantacionSerializer(plantacion).data},
+        status=status.HTTP_201_CREATED,
+    )
+
+@api_view(['POST'])
+def crear_medicion(request, pk):
+    plantacion = get_object_or_404(Plantacion, pk=pk)
+
+    entrada = InputMedicionSerializer(data=request.data)
+    entrada.is_valid(raise_exception=True)
+    datos = entrada.validated_data
+
+    if len(datos['arboles']) != plantacion.cantidad_arboles:
+        return Response(
+            {
+                'exito': False,
+                'error': (
+                    f"Se esperaban {plantacion.cantidad_arboles} árboles "
+                    f"y llegaron {len(datos['arboles'])}"
+                ),
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
-        # Site index / dominant height
-        dominant_height_calc = None
-        site_index_calc = None
-        if site_index_m is not None and age_years:
-            try:
-                dominant_height_calc = round(
-                    dominant_height_from_site_index(float(site_index_m), age_years), 2
-                )
-            except Exception:
-                dominant_height_calc = None
-        if dominant_height_m_input is not None and age_years:
-            try:
-                site_index_calc = round(
-                    site_index_from_dominant_height(float(dominant_height_m_input), age_years), 2
-                )
-            except Exception:
-                site_index_calc = None
+    filas = [calcular_arbol(a['dap_cm'], a['height_m']) for a in datos['arboles']]
 
-        # Parcela recomendada para mínimo de árboles y radio
-        recommended_area_m2 = recommended_plot_area_m2(dist_in_row_m, dist_between_rows_m, min_trees_for_plot)
-        recommended_radius_m = plot_radius_from_area_m(recommended_area_m2)
-        radius_from_provided_area_m = plot_radius_from_area_m(plot_area_m2) if plot_area_m2 else None
+    tamano = plantacion.tamano_parcela
+    edad = datos['edad']
+    ev = formula_eval.evaluar
 
-        # Carbono y equilibrio animales/ha
-        c_bosque_tn_ha = carbon_forest_tn_per_ha(agg["biomass_total_tn_per_ha"]) if agg.get("biomass_total_tn_per_ha") is not None else 0.0
-        capture_kg_day_ha = capture_kg_per_day_per_ha(c_bosque_tn_ha, age_years) if age_years else 0.0
-        animals_equilibrium = animals_per_ha_equilibrium(capture_kg_day_ha, animal_emission_kg_day) if animal_emission_kg_day else 0.0
+    def suma(campo):
+        return sum(fila[campo] for fila in filas)
 
-        return Response({
-            "per_tree": per_tree,
-            "aggregates": agg,
-            "site": {
-                "dominant_height_from_site_index_m": dominant_height_calc,
-                "site_index_from_dominant_height_m": site_index_calc,
-                "age_years": age_years,
-            },
-            "plot": {
-                "recommended_area_m2_for_min_trees": round(recommended_area_m2, 2),
-                "recommended_radius_m": round(recommended_radius_m, 2),
-                "provided_area_m2": plot_area_m2 if plot_area_m2 else None,
-                "radius_from_provided_area_m": round(radius_from_provided_area_m, 2) if radius_from_provided_area_m else None,
-                "min_trees_for_plot": min_trees_for_plot,
-            },
-            "carbon": {
-                "c_bosque_tn_per_ha": round(c_bosque_tn_ha, 2),
-                "capture_kg_per_day_per_ha": round(capture_kg_day_ha, 3),
-                "animal_emission_kg_day": animal_emission_kg_day,
-                "animals_per_ha_equilibrium": round(animals_equilibrium, 2),
-            },
-        }, status=status.HTTP_200_OK)
+    def media(campo):
+        return suma(campo) / len(filas)
 
+    def por_hectarea(total):
+        return ev('por_ha', {'valor_total': total, 'tamano_parcela': tamano})
 
-class MeasurementListCreateView(generics.ListCreateAPIView):
-    queryset = Measurement.objects.all().order_by('-created_at')
-    serializer_class = MeasurementSerializer
+    def biomasa_por_hectarea(total):
+        return ev('biomasa_ha', {'valor_total': total, 'tamano_parcela': tamano})
 
-    def create(self, request, *args, **kwargs):
-        payload = request.data or {}
-        input_data = payload.get('input_data')
-        metrics = payload.get('metrics')
-        plot_id = payload.get('plot_id')
+    altura_dominante = calcular_altura_dominante(filas, tamano)
+    arboles_ha = ev('arboles_ha', {
+        'cantidad_arboles': plantacion.cantidad_arboles,
+        'tamano_parcela': tamano,
+    })
+    dias = ev('dias', {'edad': edad})
+    indice_sitio = ev('indice_sitio', {'altura_dominante': altura_dominante, 'edad': edad})
 
-        # Si no se envían metrics, los calculamos con los datos provistos
-        if not metrics and input_data:
-            trees = input_data.get('trees', [])
-            dist_in_row_m = float(input_data.get('distance_in_row_m', 0))
-            dist_between_rows_m = float(input_data.get('distance_between_rows_m', 0))
-            plot_area_m2 = float(input_data.get('plot_area_m2', 0))
-            age_years = float(input_data.get('age_years', 0))
-            animal_emission_kg_day = float(input_data.get('animal_emission_kg_day', 5.0))
-            root_ratio = float(input_data.get('species_root_ratio', 0.263))
-            metrics = aggregate_plot_metrics(
-                trees,
-                dist_in_row_m,
-                dist_between_rows_m,
-                plot_area_m2=plot_area_m2,
-                age_years=age_years,
-                animal_emission_kg_day=animal_emission_kg_day,
-                root_ratio=root_ratio,
+    biomasa_total_ha = biomasa_por_hectarea(suma('biomasa_total'))
+    captacion_bosque = ev('captacion_bosque', {'biomasa_total_ha': biomasa_total_ha})
+    captacion_diaria = ev('captacion_diaria', {'captacion_bosque': captacion_bosque, 'dias': dias})
+    emision_diaria = ev('emision_diaria', {})
+    punto_equilibrio = ev('punto_equilibrio', {
+        'captacion_diaria': captacion_diaria,
+        'emision_diaria': emision_diaria,
+    })
+
+    with transaction.atomic():
+        medicion = Medicion.objects.create(
+            plantacion=plantacion,
+            fecha=datos['fecha'],
+            edad=edad,
+            dap_cm_media=math.sqrt(sum(f['dap_cm'] ** 2 for f in filas) / len(filas)),
+            height_m_media=media('height_m'),
+            altura_dominante=altura_dominante,
+            arboles_ha=round(arboles_ha),
+            basal_area_total=suma('basal_area'),
+            basal_ha=por_hectarea(suma('basal_area')),
+            volumen_total_cc_suma=suma('volumen_total_cc'),
+            volumen_total_sc_suma=suma('volumen_total_sc'),
+            volumen_maderable_cc_suma=suma('volumen_maderable_cc'),
+            volumen_maderable_sc_suma=suma('volumen_maderable_sc'),
+            volumen_total_cc_ha=por_hectarea(suma('volumen_total_cc')),
+            volumen_total_sc_ha=por_hectarea(suma('volumen_total_sc')),
+            volumen_maderable_cc_ha=por_hectarea(suma('volumen_maderable_cc')),
+            volumen_maderable_sc_ha=por_hectarea(suma('volumen_maderable_sc')),
+            biomasa_aerea_total_suma=suma('biomasa_aerea_total'),
+            biomasa_aerea_total_ha=biomasa_por_hectarea(suma('biomasa_aerea_total')),
+            biomasa_raiz_ha=biomasa_por_hectarea(suma('biomasa_raiz')),
+            biomasa_total_suma=suma('biomasa_total'),
+            biomasa_total_ha=biomasa_total_ha,
+            captacion_bosque=captacion_bosque,
+            indice_sitio=indice_sitio,
+            dias=dias,
+            captacion_diaria=captacion_diaria,
+            emision_diaria=emision_diaria,
+            punto_equilibrio=math.floor(punto_equilibrio),
+        )
+
+        ArbolMedido.objects.bulk_create([
+            ArbolMedido(
+                medicion=medicion,
+                plantacion=plantacion,
+                numero_arbol=numero_arbol,
+                **fila,
             )
+            for numero_arbol, fila in enumerate(filas, start=1)
+        ])
 
-        plot = Plot.objects.filter(pk=plot_id).first() if plot_id else None
-        measurement = Measurement.objects.create(plot=plot, input_data=input_data, metrics=metrics)
-        serializer = self.get_serializer(measurement)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    return Response(
+        {'exito': True, 'id_medicion': medicion.id_medicion, 'arboles_guardados': len(filas)},
+        status=status.HTTP_201_CREATED,
+    )
+
+@api_view(['GET'])
+def resumen_plantacion(request, pk):
+    plantacion = get_object_or_404(Plantacion, pk=pk)
+
+    mediciones = Medicion.objects.filter(plantacion=plantacion).values(
+        'id_medicion', 'fecha', 'edad', 'dap_cm_media', 'height_m_media',
+        'altura_dominante', 'arboles_ha', 'basal_ha',
+        'volumen_total_cc_ha', 'volumen_total_sc_ha',
+        'volumen_maderable_cc_ha', 'volumen_maderable_sc_ha',
+        'biomasa_aerea_total_ha', 'biomasa_raiz_ha', 'biomasa_total_ha',
+        'captacion_bosque', 'indice_sitio', 'dias',
+        'captacion_diaria', 'emision_diaria', 'punto_equilibrio',
+    )
+
+    return Response({
+        'id_plantacion': plantacion.id_plantacion,
+        'tamano_parcela': round(plantacion.tamano_parcela, 2),
+        'radio_parcela': round(plantacion.radio_parcela, 2),
+        'cantidad_arboles': plantacion.cantidad_arboles,
+        'mediciones': [redondear_dos_decimales(m) for m in mediciones],
+    })
+
+@api_view(['GET'])
+def arboles_de_medicion(request, pk):
+    medicion = get_object_or_404(Medicion, pk=pk)
+    arboles = ArbolMedido.objects.filter(medicion=medicion).values()
+    return Response({
+        'id_medicion': medicion.id_medicion,
+        'arboles': list(arboles),
+    })
 
 
-class MeasurementRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Measurement.objects.all()
-    serializer_class = MeasurementSerializer
+#estos quedaron de prueba
 
 @api_view(['POST'])
 def calcular_basal_area(request):
@@ -331,3 +383,4 @@ def calcular_biomasa_total(request):
         'resultado': round(biomasa_total, 4), 
         'unidad': 'kg'
     })
+
