@@ -37,6 +37,5 @@ app-ciefap/.angular
 
 
 # Environment variables
-.env
 .env.local
 
